@@ -1,0 +1,30 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../layout/shared-styles.html">
+
+<dom-module id="page-view">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+    </style>
+
+    <div class="container">
+      <div class="circle">1</div>
+      <p>Id nam odio natum malorum, tibique copiosae expetenda mel ea.Detracto suavitate repudiandae no eum. Id adhuc minim soluta nam.Id nam odio natum malorum, tibique copiosae expetenda mel ea.</p>
+    </div>
+  </template>
+
+  <script>
+    class PageView extends Polymer.Element {
+      static get is() { return 'page-view' }
+      ready(){
+        super.ready()
+        // console.log(this.parentElement.parentElement)
+        // console.log(this.parentNode.parentNode)
+      }
+    }
+
+    window.customElements.define(PageView.is, PageView);
+  </script>
+</dom-module>

@@ -1,0 +1,101 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../bower_components/polymer/lib/elements/dom-repeat.html">
+
+<link rel="import" href="../../components/nylon-panel-card/nylon-panel-card.html">
+<link rel="import" href="../../components/nylon-panel-right/nylon-panel-right.html">
+<link rel="import" href="../../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../components/nylon-toolbar-selector/nylon-toolbar-selector.html">
+<link rel="import" href="../../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../../bower_components/paper-item/paper-item.html">
+
+<link rel="import" href="../../layout/shared-styles.html">
+
+<link rel="import" href="../../redux-mixin.html">
+
+
+
+<dom-module id="page-view2-right">
+    <template>
+        <style include="shared-styles">
+             :host {
+                display: block;
+            }
+        </style>
+
+        <nylon-panel-right id="pr" title="จัดการ">
+            <nylon-toolbar-selector slot="header">
+                <paper-tabs selected="0" scrollable>
+                    <paper-tab class="font">ตั้งค่า</paper-tab>
+                </paper-tabs>
+            </nylon-toolbar-selector>
+            <nylon-panel-card id="pc2" slot="content">
+                <div slot="content">
+
+                    <div class="row">
+                        <div class="col-xs-6 col-sm-6 col-md-3">
+                            <paper-input always-float-label label="Location Name" class="font" value="{{select.location_name}}"></paper-input>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-3">
+                            <paper-dropdown-menu label="Status">
+                                <paper-listbox slot="dropdown-content" class="dropdown-content" selected="{{select.status}}">
+                                    <paper-item>OFF</paper-item>
+                                    <paper-item>ON</paper-item>
+                                </paper-listbox>
+                            </paper-dropdown-menu>
+                        </div>
+                    </div>
+
+                </div>
+                <app-toolbar slot="footer">
+                    <div main-title></div>
+                    <paper-button raised on-click="_closePanelRight" class="font">
+                        <iron-icon icon="clear"></iron-icon>&nbsp;&nbsp;ยกเลิก
+                    </paper-button>
+                    <paper-button raised class="btn-success font" on-click="_saveData">
+                        <iron-icon icon="check"></iron-icon>&nbsp;&nbsp;บันทึก
+                    </paper-button>
+                </app-toolbar>
+            </nylon-panel-card>
+        </nylon-panel-right>
+
+    </template>
+
+    <script>
+        class pageView2Right extends ReduxMixin(Polymer.Element) {
+            static get is() { return 'page-view2-right'; }
+            static get properties() {
+                return {
+                    select: {
+                        type: Object,
+                        statePath: 'view2.select'
+                    }
+                }
+            }
+
+            _closePanelRight() {
+                this.$.pr.close()
+            }
+
+            _saveData() {
+                if (!this.select.id || this.select.id == "") {
+                    Nylon.dispatch('view2AddData', this.select)
+                } else {
+                    Nylon.dispatch('view2EditData', this.select)
+                }
+            }
+
+            _delData(e) {
+                Nylon.dispatch('view2DelData', e.model.item.id)
+            }
+
+
+
+        }
+        window.customElements.define(pageView2Right.is, pageView2Right);
+    </script>
+</dom-module>

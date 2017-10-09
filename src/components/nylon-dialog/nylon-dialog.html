@@ -1,0 +1,102 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../bower_components/neon-animation/web-animations.html">
+<link rel="import" href="../../../bower_components/neon-animation/animations/scale-up-animation.html">
+<link rel="import" href="../../../bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-icon/iron-icon.html">
+
+
+<dom-module id="nylon-dialog">
+    <template>
+        <style>
+             :host {
+                display: block;
+            }
+        </style>
+        <paper-toast id="elToast">
+            <iron-icon icon="[[icon]]"></iron-icon>&nbsp;&nbsp;[[msg]]
+        </paper-toast>
+        <paper-dialog id="elConfirm" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+            <h2>[[title]]</h2>
+            <div>[[msg]]</div>
+            <div class="buttons">
+                <paper-button dialog-dismiss on-click="takeAction" ans="cancel">Cancel</paper-button>
+                <paper-button dialog-confirm autofocus on-click="takeAction" ans="ok">OK</paper-button>
+            </div>
+        </paper-dialog>
+    </template>
+
+    <script>
+        class NylonDialog extends Polymer.Element {
+            static get is() { return 'nylon-dialog'; }
+
+            static get properties() {
+                return {
+                    title:String,
+                    msg:String,
+                    icon:String
+                }
+            }
+
+            constructor() {
+                super()
+                Nylon.confirm = Nylon.confirm || {}
+                Nylon.confirm = this.openConfirm.bind(this)
+
+                Nylon.toast = Nylon.toast || {}
+                Nylon.toast = this.openToast.bind(this)
+            }
+
+            connectedCallback(){
+                super.connectedCallback()
+                
+                // Nylon.confirm({
+                //     status:'waring',
+                //     title:'ยืนยันการลบ',
+                //     msg:'หากต้องการลบให้กดปุ่ม ok'
+                // },(confirm)=>{
+                //     console.log('callback ok')
+                // })
+
+
+                // Nylon.toast({
+                //     msg:'ดีจร้า'
+                // })
+            }
+
+            openToast(op){
+                this.icon = op.icon || 'speaker-notes'
+                this.msg = op.msg
+                this.$.elToast.open()
+            }
+
+            openConfirm(op,callbackOk,callbackCancel){
+                this.icon = op.icon || 'speaker-notes'
+                this.msg = op.msg
+                this.title = op.title
+                this.callbackOk = callbackOk
+                this.callbackCancel = callbackCancel
+                this.$.elConfirm.open()
+            }
+
+
+
+            takeAction(e){
+                if(e.currentTarget.getAttribute('ans')=="ok"){
+                    this.callbackOk()
+                }else{
+                    if(this.callbackCancel)
+                        this.callbackCancel()
+                }
+            }
+
+
+
+        }
+
+        window.customElements.define(NylonDialog.is, NylonDialog);
+    </script>
+</dom-module>

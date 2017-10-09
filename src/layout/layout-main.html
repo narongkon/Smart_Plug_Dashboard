@@ -1,0 +1,146 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+
+<link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../my-icons.html">
+
+<link rel="import" href="./layout-drawer.html">
+<link rel="import" href="../redux-mixin.html">
+
+
+<dom-module id="layout-main">
+    <template>
+        <style>
+             :host {
+                --app-primary-color: #0288D1;
+                --app-secondary-color: black;
+
+                display: block;
+            }
+
+            app-drawer-layout:not([narrow]) [drawer-toggle] {
+                display: none;
+            }
+
+            app-header {
+                position: fixed;
+                z-index: 1;
+                width: 100%;
+            }
+
+            app-toolbar.header {
+                height: 48px;
+                color: #fff;
+                background-color: #0288D1;
+            }
+
+            app-header paper-icon-button {
+                --paper-icon-button-ink-color: white;
+            }
+
+            paper-progress {
+                position: absolute;
+                width:100%;
+                height: 2px;
+                --paper-progress-active-color: #FFFF8D;
+            }
+          
+        </style>
+
+
+
+        <layout-drawer id="layoutDrawer"></layout-drawer>
+
+        <app-header slot="header" fixed condenses effects="waterfall">
+            <app-toolbar class="header">
+                <paper-icon-button icon="my-icons:menu" drawer-toggle on-click="toogleMenu"></paper-icon-button>
+                <div main-title>[[i18n.common.myApp]]</div>
+                <paper-button toggles on-click="changeLanguage">[[i18n.language]]</paper-button>
+            </app-toolbar>
+            <template is="dom-if" if="[[progressEnable]]">
+                <paper-progress id="progress" value="[[progressValue]]" indeterminate="[[progressIndeterminate]]"></paper-progress>
+            </template>
+        </app-header>
+        
+        <br><br>
+        <slot></slot>
+
+
+    </template>
+
+    <script>
+        class LayoutMain extends ReduxMixin(Polymer.Element) {
+
+            static get is() { return 'layout-main'; }
+
+            static get properties() {
+                return {
+                    i18n: {
+                        type: Object,
+                        statePath: 'i18n'
+                    },
+                    progressEnable: Boolean,
+                    progressIndeterminate: Boolean,
+                    progressValue:Number,
+
+                };
+            }
+
+            ready() {
+                super.ready()
+            }
+
+            changeLanguage() {
+                if (this.i18n.language == "en") {
+                    Nylon.changeLanguage('th')
+                } else {
+                    Nylon.changeLanguage('en')
+                }
+            }
+
+            toogleMenu() {
+                this.$.layoutDrawer.toogleMenu()
+            }
+
+            progress() {
+
+                if (this.progressEnable) {
+                    this.progressClose()
+                } else {
+                    this.progressEnable = true
+                    this.progressIndeterminate = true
+                    this.progressValue = Math.random() * (95 - 70) + 70
+
+                    setTimeout(() => {
+                        this.progressIndeterminate = false;
+                    }, 800)
+
+                    return this.progressClose.bind(this)
+                }
+
+                
+            }
+
+            progressClose(callback){
+                this.progressValue = 100
+                setTimeout(() => {
+                    this.progressIndeterminate = false;
+                    if(callback)
+                        callback()
+                }, 300)
+
+                setTimeout(() => {
+                    this.progressEnable = false
+                }, 500)
+            }
+
+        }
+
+        window.customElements.define(LayoutMain.is, LayoutMain);
+    </script>
+</dom-module>

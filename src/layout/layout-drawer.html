@@ -1,0 +1,97 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
+
+<link rel="import" href="../redux-mixin.html">
+
+<link rel="import" href="../my-icons.html">
+
+<dom-module id="layout-drawer">
+    <template>
+        <style>
+             :host {
+                display: block;
+                z-index: 1;
+            }
+
+            .drawer-list {
+                margin: 0 20px;
+            }
+
+            .drawer-list a {
+                display: block;
+                padding: 0 16px;
+                text-decoration: none;
+                color: var(--app-secondary-color);
+                line-height: 40px;
+            }
+
+            .drawer-list a.iron-selected {
+                color: black;
+                font-weight: bold;
+            }
+
+            #drawer {
+                z-index: 1
+            }
+
+            iron-selector > paper-icon-item {
+                cursor: pointer;
+            }
+        </style>
+
+        <app-drawer id="drawer" no-focus-trap="false">
+            <br>
+            <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+                <!-- <paper-icon-item name="page-view" href="/" on-click="_redirect">
+                    <iron-icon icon="bookmark-border" slot="item-icon"></iron-icon>
+                    View One
+                </paper-icon-item> -->
+                <paper-icon-item  name="page-view2" href="/view2" on-click="_redirect">
+                    <iron-icon src="https://icon-icons.com/icons2/586/PNG/512/plug-wire_icon-icons.com_55283.png" slot="item-icon"></iron-icon>
+                    Smart Plug
+                </paper-icon-item>
+            </iron-selector>
+        </app-drawer>
+
+    </template>
+
+    <script>
+        class LayoutDrawer extends ReduxMixin(Polymer.Element) {
+
+            static get is() { return 'layout-drawer'; }
+
+            static get properties() {
+                return {
+                    page: String,
+                    i18n: {
+                        statePath: 'i18n'
+                    }
+                }
+            }
+
+            ready() {
+                super.ready()
+            }
+
+            toogleMenu() {
+                this.$.drawer.toggle();
+            }
+
+            _redirect(e){
+                Nylon.redirect(e.currentTarget.getAttribute('href'))
+                setTimeout(()=>{
+                    this.$.drawer.close()
+                },500)
+            }
+
+        }
+
+        window.customElements.define(LayoutDrawer.is, LayoutDrawer);
+    </script>
+</dom-module>

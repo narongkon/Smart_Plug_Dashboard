@@ -1,0 +1,137 @@
+<script>
+    Nylon.addReducer('view2', function (state, action) {
+        state = state || {
+            count: 0,
+            select: {}
+        }
+
+        switch (action.type) {
+            case 'VIEW_2_ADD':
+                state.count = ++state.count
+                return state
+            case 'VIEW_2_DEL':
+                state.count = --state.count
+                return state
+            case 'VIEW_2_GET_DATA':
+                state.data = action.payload
+                return state
+            case 'VIEW_2_SELECT_DATA':
+                state.select = action.payload
+                return state
+            case 'VIEW_2_CLEAR_SELECT':
+                state.select = {}
+                return state
+            default:
+                return state
+        }
+        return state
+    })
+
+
+    Nylon.addAction({
+        view2Con: function (arg1) {
+            return { type: arg1 }
+        },
+        view2GetData: function () {
+            var progress = Nylon.$['page-view2'].$.list.$.pc1.progress({ position: 'top' })
+            return dispatch => {
+                axios.get('/todolist')
+                    .then(
+                    res => {
+                        progress(() => {
+                            dispatch({ type: 'VIEW_2_GET_DATA', payload: res.data })
+                        })
+                    }
+                    )
+                    .catch(
+                    err => {
+                        progress(() => {
+                            console.log({ err })
+                            Nylon.$['page-view2'].$.list.$.pc1.notify({
+                                status: 'error',
+                                msg: err.response.data.msg,
+                                position: 'top'
+                            })
+                        })
+                    }
+                    )
+            }
+
+        },
+        view2AddData: function (select) {
+            return dispatch => {
+                var progress = Nylon.$['page-view2'].$.right.$.pc2.progress()
+                axios.post('/todolist', select).then(
+                    res => {
+                        Nylon.dispatch('view2GetData')
+                        progress(_ => {
+                            Nylon.$['page-view2'].$.right.$.pr.close()
+                            Nylon.store.dispatch({ type: 'VIEW_2_CLEAR_SELECT' })
+
+                            Nylon.toast({
+                                msg: 'เพิ่มเสร็จสิ้น'
+                            })
+                        })
+
+
+                    }
+                )
+            }
+        },
+        view2DelData: function (id) {
+            return dispatch => {
+                axios.delete(`/todolist/${id}`).then(
+                    res => {
+                        Nylon.dispatch('view2GetData')
+                    }
+                )
+            }
+        },
+        view2SelectData: function (id) {
+            return dispatch => {
+                axios.get(`/todolist/${id}`).then(
+                    res => {
+                        dispatch({ type: 'VIEW_2_SELECT_DATA', payload: res.data })
+                        Nylon.$['page-view2'].$.right.$.pr.open()
+                    }
+                )
+            }
+        },
+        view2EditData: function (select) {
+            // var progress = Nylon.$['page-view2'].$.right.$.pc2.progress()
+
+            return dispatch => {
+                axios.put('/todolist', select).then(
+                    res => {
+
+                        progress(() => {
+                            Nylon.dispatch('view2GetData')
+                            Nylon.$['page-view2'].$.right.$.pr.close()
+                            Nylon.store.dispatch({ type: 'VIEW_2_CLEAR_SELECT' })
+
+                            Nylon.toast({
+                                msg: 'แก้ไขเสร็จสิ้น'
+                            })
+                        })
+
+                    }
+                )
+            }
+        },
+        view2ConnectData: function (select) {
+            // var progress = Nylon.$['page-view2'].$.right.$.pc2.progress()
+
+            return dispatch => {
+                // console.log(select)
+                axios.put('/todolist/connect', select).then(
+                    res => {
+                        Nylon.toast({
+                            msg: 'แก้ไขเสร็จสิ้น'
+                        })
+                    }
+                )
+            }
+        }
+    })
+
+</script>

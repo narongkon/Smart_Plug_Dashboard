@@ -1,0 +1,69 @@
+<script>
+  window.Nylon = window.Nylon || {$:{}}
+</script>
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="./nylon-axios.html">
+<link rel="import" href="./redux-mixin.html">
+<link rel="import" href="./i18n/common-i18n.html">
+
+<link rel="import" href="./nylon-init.html">
+<link rel="import" href="./layout/shared-styles.html">
+<!-- <link rel="import" href="./my-mqtt.html"> -->
+
+<dom-module id="nylon-app">
+  <template>
+    <nylon-init id="nylonInit"></nylon-init>
+  </template>
+
+  <script>
+    class NylonApp extends ReduxMixin(Polymer.Element) {
+
+      static get is() { return 'nylon-app'; }
+
+      ready() {
+        super.ready()
+      }
+
+      connectedCallback() {
+        super.connectedCallback()
+
+        //Set redirect page of nylon-pages to global
+        Nylon.redirect = this.$.nylonInit.$.nylonPage.redirect
+
+        //Listener change page
+        this.$.nylonInit.addEventListener(
+          'nylon-pages-changed',
+          e => this._pageChanged(e)
+        )
+      }
+
+      _pageChanged(e) {
+        let elementName = e.detail.element.localName
+        let resolvedUrl = this.resolveUrl(`pages/${elementName}/${elementName}.html`);
+        //console.log(this.$.nylonInit.$.layoutMain.$.progress)
+        var progress = this.$.nylonInit.$.layoutMain.progress()
+
+        Polymer.importHref(
+          resolvedUrl,
+          () => {
+            this.$.nylonInit.$.layoutMain.$.layoutDrawer.page = elementName
+
+            if(!Nylon.$[elementName])
+              Nylon.$[elementName] = e.detail.element
+
+            progress()
+            e.detail.active()
+          },
+          () => {
+            progress()
+            console.log('import error')
+          },
+          true);
+      }
+
+    }
+
+    window.customElements.define(NylonApp.is, NylonApp);
+  </script>
+</dom-module>

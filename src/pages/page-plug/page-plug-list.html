@@ -1,0 +1,217 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../bower_components/polymer/lib/elements/dom-repeat.html">
+
+<link rel="import" href="../../components/nylon-panel-card/nylon-panel-card.html">
+<link rel="import" href="../../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../../bower_components/vaadin-grid/vaadin-grid-column.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../../bower_components/paper-toggle-button/paper-toggle-button.html">
+
+<link rel="import" href="../../redux-mixin.html">
+
+<link rel="import" href="../../layout/shared-styles.html">
+
+<dom-module id="page-plug-list">
+    <template>
+        <style include="shared-styles">
+             :host {
+                display: block;
+            }
+        </style>
+
+        <nylon-panel-card id="pc1">
+            <app-toolbar slot="header">
+                <div main-title>MAC Address </div>
+                <!-- <paper-button raised class="btn-primary font" on-click="_openPanelRight">
+                    <iron-icon icon="add-circle-outline"></iron-icon>&nbsp;&nbsp;เพิ่ม
+                </paper-button> -->
+            </app-toolbar>
+            <vaadin-grid slot="content" sub-slot="grid" items="[[data]]">
+                <vaadin-grid-column width="50px" flex-grow="0">
+                    <template class="header"></template>
+                    <template> [[_index(index)]] </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column>
+                    <template class="header">MAC Address</template>
+                    <template> [[item.mac_address]] </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column>
+                    <template class="header">Location Name</template>
+                    <template> [[item.location_name]] </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column width="100px" flex-grow="0">
+                    <template class="header">Watt</template>
+                    <template> [[item.electricity.watt]] </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column width="100px" flex-grow="0">
+                    <template class="header">Volt</template>
+                    <template> [[item.electricity.volt]] </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column width="100px" flex-grow="0">
+                    <template class="header">Amp</template>
+                    <template> [[item.electricity.amp]] </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column width="100px" flex-grow="0">
+                    <template class="header">Pow</template>
+                    <template> [[item.electricity.power]] </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column width="100px" flex-grow="0">
+                    <template class="header">Status</template>
+                    <template>
+                        <paper-toggle-button checked="[[_checked(item.status)]]" on-checked-changed="_status_click"></paper-toggle-button>
+                    </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column width="100px" flex-grow="0">
+                    <template class="header">Connect</template>
+                    <template>
+                        <paper-toggle-button checked="[[_checked(item.connect)]]" on-checked-changed="_connect_click"></paper-toggle-button>
+                    </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column>
+                    <template class="header"> จัดการ</template>
+                    <template>
+                        <div>
+                            <paper-icon-button icon="create" on-click="_selectData"></paper-icon-button>
+                            <paper-icon-button icon="delete" on-click="_delData"></paper-icon-button>
+                        </div>
+                    </template>
+                </vaadin-grid-column>
+            </vaadin-grid>
+        </nylon-panel-card>
+
+
+    </template>
+
+    <script>
+        class pagePlugList extends ReduxMixin(Polymer.Element) {
+            static get is() { return 'page-plug-list'; }
+            static get properties() {
+                return {
+                    data: {
+                        type: Object,
+                        statePath: 'plug.data'
+                    },
+                    i18n: {
+                        type: Object,
+                        statePath: 'i18n.pageMyView'
+                    },
+                    checked: {
+                        type: Boolean,
+                        value: false
+                    },
+                    change_status: {
+                        type: Object,
+                        value: {},
+                        observer: '_change_status'
+                    },
+                    change_electricity: {
+                        type: Object,
+                        value: {},
+                        observer: '_change_electricity'
+                    }
+                }
+            }
+
+            _checked(e) {
+                if (e == 1) {
+                    return true
+                } else {
+                    return false
+                }
+            }
+
+            _change_status(e) {
+                if (this.data) {
+                    this.data.map((item, index) => {
+                        if (item.mac_address == e.mac_address) {
+                            this.set('data.' + index + '.status', e.status)
+                        }
+                    })
+                }
+            }
+
+            _change_electricity(e) {
+                // console.log(e)
+                if (this.data) {
+                    this.data.map((item, index) => {
+                        if (item.mac_address == e.mac_address) {
+                            this.set('data.' + index + '.electricity.volt', e.volt)
+                            this.set('data.' + index + '.electricity.amp', e.amp)
+                            this.set('data.' + index + '.electricity.power', e.power)
+                            this.set('data.' + index + '.electricity.watt', e.watt)
+                        }
+                    })
+                }
+            }
+
+            _statusUpdate(e) {
+                console.log(e.model.item.id);
+            }
+
+            _selectData(e) {
+                Nylon.dispatch('plugSelectData', e.model.item.id)
+            }
+
+            _delData(e) {
+                Nylon.confirm({
+                    status: 'waring',
+                    title: 'ยืนยันการลบ',
+                    msg: 'หากต้องการลบให้กดปุ่ม ok'
+                }, (confirm) => {
+                    Nylon.dispatch('plugDelData', e.model.item.id)
+                })
+
+
+            }
+
+            _openPanelRight() {
+                Nylon.$['page-plug'].$.right.$.pr.open()
+            }
+
+            _index(i) {
+                return i + 1;
+            }
+
+            _status_click(e) {
+                if (e.model.item) {
+                    console.log('status_click');
+                    var index = e.model.index
+                    if (e.model.item.status == 1) {
+                        this.set('data.' + index + '.status', 0)
+                        Nylon.dispatch('plugEditData', this.data[e.model.index])
+                    } else {
+                        this.set('data.' + index + '.status', 1)
+                        Nylon.dispatch('plugEditData', this.data[e.model.index])
+                    }
+                    // console.log(this.data[0]);
+                }
+                // console.log(this.data.e.model.index)
+                // var index = e.model.index
+                // this.data.map((item, index) => {
+                //     console.log(item)
+                // })
+            }
+
+            _connect_click(e) {
+                if (e.model.item) {
+                    console.log('connect_click');
+                    var index = e.model.index
+                    if (e.model.item.connect == 1) {
+                        this.set('data.' + index + '.connect', 0)
+                        Nylon.dispatch('plugConnectData', this.data[e.model.index])
+                    } else {
+                        this.set('data.' + index + '.connect', 1)
+                        Nylon.dispatch('plugConnectData', this.data[e.model.index])
+                    }
+                }
+            }
+
+
+        }
+        window.customElements.define(pagePlugList.is, pagePlugList);
+    </script>
+</dom-module>
