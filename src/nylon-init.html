@@ -3,10 +3,11 @@
 <link rel="import" href="./components/nylon-dialog/nylon-dialog.html">
 <link rel="import" href="./layout/layout-main.html">
 
-<link rel="lazy-import" href="pages/page-view/page-view.html">
-<link rel="lazy-import" href="pages/page-view2/page-view2.html">
-<link rel="lazy-import" href="pages/page-404/page-404.html">
-<link rel="lazy-import" href="pages/page-plug/page-plug.html">
+<link rel="lazy-import" href="./pages/page-view/page-view.html">
+<link rel="lazy-import" href="./pages/page-view2/page-view2.html">
+<link rel="lazy-import" href="./pages/page-404/page-404.html">
+<link rel="lazy-import" href="./pages/page-plug/page-plug.html">
+<link rel="lazy-import" href="./pages/page-gateway/page-gateway.html">
 
 <dom-module id="nylon-init">
   <template>
@@ -21,7 +22,8 @@
     <layout-main id="layoutMain">
       <nylon-pages id="nylonPage">
         <!-- <page-view path="/"></page-view> -->
-        <page-plug path="/"></page-plug>
+        <page-plug path="/:id"></page-plug>
+        <page-gateway path="/"></page-gateway>
         <!-- <page-view2 path="/"></page-view2> -->
         <page-404 path="*"></page-404>
       </nylon-pages>

@@ -1,16 +1,12 @@
 <script>
     Nylon.addReducer('plug', function (state, action) {
         state = state || {
-            count: 0,
             select: {}
         }
 
         switch (action.type) {
-            case 'PLUG_ADD':
-                state.count = ++state.count
-                return state
-            case 'PLUG_DEL':
-                state.count = --state.count
+            case 'PLUG_SET_PARAMS':
+                state._params = action.payload
                 return state
             case 'PLUG_GET_DATA':
                 state.data = action.payload
@@ -29,10 +25,18 @@
 
 
     Nylon.addAction({
-        plugGetData: function () {
+
+        PLUG_SET_PARAMS: function (data) {
+            return dispatch => {
+                dispatch({ type: 'PLUG_SET_PARAMS', payload: data })
+            }
+        },
+        PLUG_GET_DATA: function (id) {
+
             // var progress = Nylon.$['page-plug'].$.list.$.pc1.progress({ position: 'top' })
             return dispatch => {
-                axios.get('/list')
+                var gateway = Nylon.store.getState().plug._params.id;
+                axios.get(`/list?gateway=${gateway}`)
                     .then(
                     res => {
                         // progress(() => {
@@ -54,12 +58,12 @@
                     )
             }
         },
-        plugAddData: function (select) {
+        PLUG_INSERT_DATA: function (data) {
             return dispatch => {
                 var progress = Nylon.$['page-plug'].$.right.$.pc2.progress()
                 axios.post('/list', select).then(
                     res => {
-                        Nylon.dispatch('plugGetData')
+                        Nylon.dispatch('PLUG_GET_DATA')
                         progress(_ => {
                             Nylon.$['page-plug'].$.right.$.pr.close()
                             Nylon.store.dispatch({ type: 'PLUG_CLEAR_SELECT' })
@@ -74,18 +78,18 @@
                 )
             }
         },
-        plugDelData: function (id) {
+        PLUG_DELETE_DATA: function (id) {
             return dispatch => {
-                axios.delete(`/list/${id}`).then(
+                axios.delete(`/list?id=${id}`).then(
                     res => {
-                        Nylon.dispatch('plugGetData')
+                        Nylon.dispatch('PLUG_GET_DATA')
                     }
                 )
             }
         },
-        plugSelectData: function (id) {
+        PLUG_SELECT_DATA: function (id) {
             return dispatch => {
-                axios.get(`/list/${id}`).then(
+                axios.get(`/list?id=${id}`).then(
                     res => {
                         dispatch({ type: 'PLUG_SELECT_DATA', payload: res.data })
                         Nylon.$['page-plug'].$.right.$.pr.open()
@@ -93,42 +97,67 @@
                 )
             }
         },
-        plugEditData: function (select) {
-            // var progress = Nylon.$['page-plug'].$.right.$.pc2.progress()
-            console.log('plugEditData');
+        PLUG_EDIT_DATA: function (select) {
+            var progress = Nylon.$['page-plug'].$.right.$.pc2.progress()
             return dispatch => {
                 axios.put('/list', select).then(
                     res => {
-
-                        // progress(() => {
-                        let id = setInterval(function () {
-                            Nylon.dispatch('plugGetData')
-                            clearInterval(id);
-                        }, 8000);
-                        // Nylon.dispatch('plugGetData')
-
-                        Nylon.$['page-plug'].$.right.$.pr.close()
-                        Nylon.store.dispatch({ type: 'PLUG_CLEAR_SELECT' })
-
-                        Nylon.toast({
-                            msg: 'แก้ไขเสร็จสิ้น'
+                        progress(() => {
+                            Nylon.dispatch('PLUG_GET_DATA')
+                            Nylon.$['page-plug'].$.right.$.pr.close()
+                            Nylon.toast({
+                                msg: 'แก้ไขเสร็จสิ้น'
+                            })
                         })
-                        // })
-
                     }
                 )
             }
         },
-        plugConnectData: function (select) {
+        PLUG_EDIT_STATUS: function (data) {
             // var progress = Nylon.$['page-plug'].$.right.$.pc2.progress()
-
             return dispatch => {
-                // console.log(select)
-                axios.put('/list/connect', select).then(
+                axios.put('/list', data).then(
+                    res => {
+                        // setTimeout(function () {
+                        //     Nylon.dispatch('PLUG_GET_DATA')
+                        // }, 15000);
+                        Nylon.toast({
+                            msg: 'แก้ไขเสร็จสิ้น'
+                        })
+                    }
+                )
+            }
+        },
+        PLUG_CONNECT: function (data) {
+            return dispatch => {
+                // console.log('Data', data)
+                axios.put('/list/connect', data).then(
                     res => {
                         Nylon.toast({
                             msg: 'แก้ไขเสร็จสิ้น'
                         })
+                    }
+                )
+            }
+        },
+        SEND_PING_DATA: function () {
+            return dispatch => {
+                // console.log('Redux');
+                // console.log('REDUX PING', Nylon.store.getState().plug._params.id)
+                var gateway = Nylon.store.getState().plug._params.id;
+                axios.get(`/list/ping?gateway=${gateway}`).then(
+                    res => { }
+                )
+            }
+        },
+        UPDATE_CONNECT: function (data) {
+            return dispatch => {
+                // console.log('CCCCC', data);
+                // console.log('REDUX PING', Nylon.store.getState().plug._params.id)
+                // var gateway = Nylon.store.getState().plug._params.id;
+                axios.put(`/list/ping`, data).then(
+                    res => {
+                        Nylon.dispatch('PLUG_GET_DATA')
                     }
                 )
             }

@@ -1,0 +1,115 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../bower_components/polymer/lib/elements/dom-repeat.html">
+
+<link rel="import" href="../../components/nylon-panel-card/nylon-panel-card.html">
+<link rel="import" href="../../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../../bower_components/vaadin-grid/vaadin-grid-column.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../../bower_components/paper-toggle-button/paper-toggle-button.html">
+
+<link rel="import" href="../../redux-mixin.html">
+
+<link rel="import" href="../../layout/shared-styles.html">
+
+<dom-module id="page-gateway-list">
+    <template>
+        <style include="shared-styles">
+            :host {
+                display: block;
+            }
+        </style>
+
+        <nylon-panel-card id="pc1">
+            <app-toolbar slot="header">
+                <div main-title></div>
+                <paper-button raised class="btn-primary font" on-click="_openPanelRight">
+                    <iron-icon icon="add"></iron-icon>&nbsp;&nbsp;INSERT
+                </paper-button>
+            </app-toolbar>
+            <vaadin-grid slot="content" sub-slot="grid" items="[[data]]" on-active-item-changed="_select_item">
+                <vaadin-grid-column width="50px">
+                    <template class="header">
+                        <div style="padding: 10px">#</div>
+                    </template>
+                    <template>
+                        <div style="padding: 10px">[[_index(index)]]</div>
+                    </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column width="230px">
+                    <template class="header">MAC Address</template>
+                    <template> [[item.mac_address]] </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column width="230px">
+                    <template class="header">Desciption</template>
+                    <template>[[item.desciption]]</template>
+                </vaadin-grid-column>
+                <vaadin-grid-column>
+                    <template class="header">Manage</template>
+                    <template>
+                        <div>
+                            <paper-icon-button icon="create" on-click="_selectData"></paper-icon-button>
+                            <paper-icon-button icon="delete" on-click="_delData"></paper-icon-button>
+                        </div>
+                    </template>
+                </vaadin-grid-column>
+            </vaadin-grid>
+        </nylon-panel-card>
+
+
+    </template>
+
+    <script>
+        class PageGatewayList extends ReduxMixin(Polymer.Element) {
+            static get is() { return 'page-gateway-list'; }
+            static get properties() {
+                return {
+                    i18n: {
+                        type: Object,
+                        statePath: 'i18n.pageMyView'
+                    },
+                    data: {
+                        type: Object,
+                        statePath: 'gateway.data'
+                    },
+                }
+            }
+
+            _select_item(e) {
+                if (e.detail.value != null) {
+                    Nylon.redirect(e.detail.value.mac_address)
+                }
+            }
+
+            _selectData(e) {
+                Nylon.dispatch('GATEWAY_SELECT_DATA', e.model.item.id)
+            }
+
+            _delData(e) {
+                Nylon.confirm({
+                    status: 'waring',
+                    title: 'ยืนยันการลบ',
+                    msg: 'หากต้องการลบให้กดปุ่ม ok'
+                }, (confirm) => {
+                    Nylon.dispatch('GATEWAY_DELETE_DATA', e.model.item.id)
+                })
+
+
+            }
+
+            _openPanelRight() {
+                Nylon.dispatch('GATEWAY_CLEAR_SELECT')
+                Nylon.$['page-gateway'].$.right.$.pr.open()
+            }
+
+            _index(i) {
+                return i + 1;
+            }
+
+        }
+        window.customElements.define(PageGatewayList.is, PageGatewayList);
+    </script>
+</dom-module>

@@ -1,0 +1,51 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../components/nylon-toolbar-selector/nylon-toolbar-selector.html">
+<link rel="import" href="./shared-styles.html">
+
+<dom-module id="layout-toolbar">
+    <template>
+        <style include="shared-styles">
+            :host {
+                display: block;
+            }
+        </style>
+        <nylon-toolbar-selector>
+            <app-toolbar>
+                <div main-title>[[title]]</div>
+            </app-toolbar class="toolbar-header">
+            <paper-tabs selected="0" scrollable>
+                <paper-tab class="font">[[subTitle]]</paper-tab>
+            </paper-tabs>
+        </nylon-toolbar-selector>
+    </template>
+
+    <script>
+        class LayoutToolbar extends ReduxMixin(Polymer.Element) {
+
+            static get is() { return 'layout-toolbar'; }
+
+            static get properties() {
+                return {
+                    i18n: {
+                        type: Object,
+                        statePath: 'i18n'
+                    },
+                    title: {
+                        type: String
+                    },
+                    subTitle: {
+                        type: String
+                    }
+                };
+               
+            }
+            ready() {
+                super.ready()
+            }
+        }
+
+        window.customElements.define(LayoutToolbar.is, LayoutToolbar);
+    </script>
+</dom-module>

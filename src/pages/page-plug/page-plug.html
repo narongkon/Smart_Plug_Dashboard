@@ -1,9 +1,6 @@
 <link rel="import" href="../../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../../bower_components/polymer/lib/elements/dom-repeat.html">
-
-<link rel="import" href="../../../bower_components/app-layout/app-toolbar/app-toolbar.html">
-<link rel="import" href="../../components/nylon-toolbar-selector/nylon-toolbar-selector.html">
-<link rel="import" href="../../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../layout/layout-toolbar.html">
 
 <link rel="import" href="./page-plug-list.html">
 <link rel="import" href="./page-plug-right.html">
@@ -17,19 +14,12 @@
 <dom-module id="page-plug">
     <template>
         <style include="shared-styles">
-             :host {
+            :host {
                 display: block;
             }
         </style>
 
-        <nylon-toolbar-selector>
-            <app-toolbar>
-                <div main-title>ตารางข้อมูลการเชื่อมต่อ SMART PLUG</div>
-            </app-toolbar class="toolbar-header">
-            <paper-tabs selected="0" scrollable>
-                <paper-tab class="font">ตารางข้อมูล</paper-tab>
-            </paper-tabs>
-        </nylon-toolbar-selector>
+        <layout-toolbar title="Table Plug with Gateway ([[_params.id]])" sub-title="Plug"></layout-toolbar>
         <div class="container">
             <page-plug-list id="list"></page-plug-list>
             <page-plug-right id="right"></page-plug-right>
@@ -40,17 +30,25 @@
     </template>
 
     <script>
-        class pagePlug extends ReduxMixin(Polymer.Element) {
+        class PagePlug extends ReduxMixin(Polymer.Element) {
             static get is() { return 'page-plug'; }
             static get properties() {
                 return {
                     _params: {
                         type: Object
+                    },
+                    data_ping: {
+                        type: Array,
+                        value: []
                     }
                 }
             }
+
             ready() {
                 super.ready();
+            }
+
+            mqtt_connect() {
                 // Create a client instance
                 var cid = 'mqttjs_' + Math.random().toString(16).substr(2, 8);
                 window.client = new Paho.MQTT.Client("m10.cloudmqtt.com", 30277, cid);
@@ -69,7 +67,13 @@
             }
 
             onConnect() {
-                window.client.subscribe("front/64108168");
+                var mac_address_gateway = Nylon.$['page-plug']._params.id;
+                window.client.subscribe(mac_address_gateway);
+                window.client.subscribe("front/" + mac_address_gateway);
+                // var all_data = 'DATA'
+                // var message = new Paho.MQTT.Message(all_data);
+                // message.destinationName = 'cloudmqtt';
+                // window.client.send(message);
             }
 
             onPub(e) {
@@ -90,57 +94,136 @@
                 }
             }
 
-            ascii_to_hexa(str) {
-                var mesArr = Array.prototype.slice.call(str, 0);
-                var arr = [];
-                for (var i = 0; i < mesArr.length; i++) {
-                    arr.push(Number(mesArr[i]).toString(16))
+            twoDigit(number) {
+                return (number < 10 || number == 'a' || number == 'b' || number == 'c' || number == 'd' || number == 'e' || number == 'f' ? '0' : '') + number
+            }
+
+            ascii_to_hex(str) {
+                // console.log('ascii_to_hex', str);
+                // return str
+                let mesArr = Array.prototype.slice.call(str, 0)
+                let arr = []
+                for (let i = 0; i < mesArr.length; i++) {
+                    let a = this.twoDigit(Number(mesArr[i]).toString(16))
+                    arr.push(a)
                 }
-                return arr;
+                return arr
             }
 
             // called when a message arrives
             onMessageArrived(message) {
-                console.log("onMessageArrived:" + message.payloadString);
-                var msg = message.payloadString
-                var msg_filter = message.payloadString.split('/')
-                console.log(msg_filter)
-                if (msg_filter[0] == 'status') {
-                    Nylon.$['page-plug'].$.list.change_status = { mac_address: msg_filter[1], status: Number(msg_filter[2]) }
-                }
-                if (msg_filter[0] == 'electricity') {
-                    Nylon.$['page-plug'].$.list.change_electricity = {
-                        mac_address: msg_filter[1],
-                        volt: Number(msg_filter[2]),
-                        amp: Number(msg_filter[3]),
-                        power: Number(msg_filter[4]),
-                        watt: Number(msg_filter[5])
+
+                // console.log(message)
+
+                if (message.destinationName == 'front/' + Nylon.$['page-plug']._params.id) {
+
+                    // console.log("onMessageArrived:" + message.payloadString);
+                    var msg = message.payloadString
+                    var msg_filter = message.payloadString.split('/')
+                    console.log(msg_filter)
+                    switch (msg_filter[0]) {
+                        case 'status':
+                            Nylon.$['page-plug'].$.list.change_status = { mac_address: msg_filter[1], status: Number(msg_filter[2]) }
+                            break;
+                        case 'electricity':
+                            Nylon.$['page-plug'].$.list.change_electricity = {
+                                mac_address: msg_filter[1],
+                                volt: Number(msg_filter[2]),
+                                amp: Number(msg_filter[3]),
+                                power: Number(msg_filter[4]),
+                                watt: Number(msg_filter[5])
+                            }
+                            break;
+                        case 'add':
+                            Nylon.dispatch('PLUG_GET_DATA')
+                            break;
+                        case 'confirm_status':
+                            Nylon.dispatch('PLUG_GET_DATA')
+                            break;
+                        // case 'ping':
+                        //     console.log('Ping')
+                        //     Nylon.dispatch('plugGetData')
+                        //     break;
                     }
+
+
+                } else if (message.destinationName == Nylon.$['page-plug']._params.id) {
+
+                    var data = Nylon.$['page-plug'].ascii_to_hex(message.payloadBytes)
+                    // console.log('Data', data)
+                    if (data[10] == 'a4') {
+                        var mac = []
+                        // console.log('Data', data)
+                        for (var i = 2; i < 10; i++) {
+                            mac += data[i]
+                        }
+
+                        Nylon.$['page-plug'].data_ping.push(mac)
+                        // .push(mac)
+                        // Nylon.$['page-plug'].$.list._ping(mac)
+                        // console.log('Mac', mac)
+                    }
+
                 }
-                if (msg_filter[0] == 'add') {
-                    Nylon.dispatch('plugGetData')
-                }
 
-                // Nylon.dispatch('plugGetData')
-                // console.log(message.payloadBytes.length)
-                // let data = []
-                // for (let x in message.payloadBytes) {
-
-                //     data[x] = message.payloadBytes[x].toString(16)
-                // }
-
-                // console.log(data)
-                // let a = this.ascii_to_hexa(message.payloadBytes)
             }
 
             nylonPagesActive() {
-                Nylon.dispatch('plugGetData')
+                Nylon.dispatch('PLUG_SET_PARAMS', this._params)
+                this.mqtt_connect();
+                Nylon.dispatch('PLUG_GET_DATA')
+                this.ping()
+            }
+
+            ping() {
+                var flag = 0
+                Nylon.$['page-plug'].data_ping = [];
                 setInterval(function () {
-                    // Nylon.dispatch('plugGetData')
-                }, 3000);
+                    if (flag == 0) {
+                        // console.log('SEND_PING_DATA')
+                        Nylon.$['page-plug'].data_ping = [];
+                        Nylon.dispatch('SEND_PING_DATA')
+                        flag++;
+                    }
+                }, 5000)
+                setInterval(function () {
+                    if (flag == 1) {
+                        // console.log(flag)
+                        var data1 = Nylon.$['page-plug'].$.list.data
+                        var data2 = Nylon.$['page-plug'].data_ping
+                        var con_t = []
+                        var con_f = []
+                        if (data2.length == 0) {
+                            for (var i in data1) {
+                                con_f.push(data1[i].id)
+                            }
+                        } else {
+                            for (var i in data1) {
+                                for (var j in data2) {
+                                    if (data1[i].mac_address == data2[j]) {
+                                        con_t.push(data1[i].id)
+                                    } else {
+                                        con_f.push(data1[i].id)
+                                    }
+                                    // console.log(data1[i].mac_address);
+                                    // console.log(data2[j]);
+                                }
+                            }
+                        }
+
+                        var data = { con_f, con_t }
+
+                        Nylon.dispatch('UPDATE_CONNECT', data)
+
+                        flag = 0;
+                    }
+                }, 40000)
+
+
             }
 
         }
-        window.customElements.define(pagePlug.is, pagePlug);
+
+        window.customElements.define(PagePlug.is, PagePlug);
     </script>
 </dom-module>

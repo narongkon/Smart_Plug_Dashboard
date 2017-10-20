@@ -1,0 +1,52 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../bower_components/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../../layout/layout-toolbar.html">
+
+<link rel="import" href="./page-gateway-list.html">
+<link rel="import" href="./page-gateway-right.html">
+
+<link rel="import" href="../../redux-mixin.html">
+<link rel="import" href="../../redux/gateway-redux.html">
+<link rel="import" href="../../i18n/page-my-view-i18n.html">
+
+<link rel="import" href="../../layout/shared-styles.html">
+
+<dom-module id="page-gateway">
+    <template>
+        <style include="shared-styles">
+            :host {
+                display: block;
+            }
+        </style>
+
+        <layout-toolbar title="Table Gateway (SMART PLUG)" sub-title="Gateway"></layout-toolbar>
+        <div class="container">
+            <page-gateway-list id="list"></page-gateway-list>
+            <page-gateway-right id="right"></page-gateway-right>
+        </div>
+    </template>
+
+    <script>
+        class PageGateWay extends ReduxMixin(Polymer.Element) {
+            static get is() { return 'page-gateway'; }
+            static get properties() {
+                return {
+                    _params: {
+                        type: Object
+                    }
+                }
+            }
+
+            ready() {
+                super.ready();
+            }
+
+            nylonPagesActive() {
+                Nylon.dispatch('GATEWAY_GET_DATA')
+            }
+
+        }
+
+        window.customElements.define(PageGateWay.is, PageGateWay);
+    </script>
+</dom-module>
