@@ -107,16 +107,6 @@
                         type: Boolean,
                         value: false
                     },
-                    change_status: {
-                        type: Object,
-                        value: {},
-                        observer: '_change_status'
-                    },
-                    change_electricity: {
-                        type: Object,
-                        value: {},
-                        observer: '_change_electricity'
-                    }
                 }
             }
 
@@ -129,42 +119,6 @@
                     return true
                 } else {
                     return false
-                }
-            }
-
-            _change_status(e) {
-                if (this.data) {
-                    this.data.map((item, index) => {
-                        if (item.mac_address == e.mac_address) {
-                            this.set('data.' + index + '.status', e.status)
-                        }
-                    })
-                }
-            }
-
-            _change_electricity(e) {
-                // console.log(e)
-                if (this.data) {
-                    this.data.map((item, index) => {
-                        if (item.mac_address == e.mac_address) {
-                            this.set('data.' + index + '.electricity.volt', e.volt)
-                            this.set('data.' + index + '.electricity.amp', e.amp)
-                            this.set('data.' + index + '.electricity.power', e.power)
-                            this.set('data.' + index + '.electricity.watt', e.watt)
-                        }
-                    })
-                }
-            }
-
-            _ping(e) {
-                console.log('Mac', e)
-                // console.log('Data List', this.data)
-                if (this.data) {
-                    this.data.map((item, index) => {
-                        if (item.mac_address == e) {
-                            this.set('data.' + index + '.connect', true)
-                        }
-                    })
                 }
             }
 
@@ -201,13 +155,8 @@
                         this.set('data.' + index + '.status', 1)
                         Nylon.dispatch('PLUG_EDIT_STATUS', this.data[e.model.index])
                     }
-                    // console.log(this.data[0]);
+                    
                 }
-                // console.log(this.data.e.model.index)
-                // var index = e.model.index
-                // this.data.map((item, index) => {
-                //     console.log(item)
-                // })
             }
 
             _connect_click(e) {

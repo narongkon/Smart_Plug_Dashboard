@@ -114,13 +114,9 @@
             }
         },
         PLUG_EDIT_STATUS: function (data) {
-            // var progress = Nylon.$['page-plug'].$.right.$.pc2.progress()
             return dispatch => {
                 axios.put('/list', data).then(
                     res => {
-                        // setTimeout(function () {
-                        //     Nylon.dispatch('PLUG_GET_DATA')
-                        // }, 15000);
                         Nylon.toast({
                             msg: 'แก้ไขเสร็จสิ้น'
                         })
@@ -130,23 +126,12 @@
         },
         PLUG_CONNECT: function (data) {
             return dispatch => {
-                // console.log('Data', data)
                 axios.put('/list/connect', data).then(
                     res => {
                         Nylon.toast({
                             msg: 'แก้ไขเสร็จสิ้น'
                         })
                     }
-                )
-            }
-        },
-        SEND_PING_DATA: function () {
-            return dispatch => {
-                // console.log('Redux');
-                // console.log('REDUX PING', Nylon.store.getState().plug._params.id)
-                var gateway = Nylon.store.getState().plug._params.id;
-                axios.get(`/list/ping?gateway=${gateway}`).then(
-                    res => { }
                 )
             }
         },

@@ -58,6 +58,7 @@
                         progress(_ => {
                             Nylon.$['page-gateway'].$.right.$.pr.close()
                             Nylon.store.dispatch({ type: 'GATEWAY_CLEAR_SELECT' })
+                            axios.get('/mqtt')
                             Nylon.toast({
                                 msg: 'เพิ่มเสร็จสิ้น'
                             })

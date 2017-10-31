@@ -40,7 +40,8 @@
                     data_ping: {
                         type: Array,
                         value: []
-                    }
+                    },
+
                 }
             }
 
@@ -123,16 +124,18 @@
                     console.log(msg_filter)
                     switch (msg_filter[0]) {
                         case 'status':
-                            Nylon.$['page-plug'].$.list.change_status = { mac_address: msg_filter[1], status: Number(msg_filter[2]) }
+                            Nylon.dispatch('PLUG_GET_DATA')
+                            // Nylon.$['page-plug'].$.list.change_status = { mac_address: msg_filter[1], status: Number(msg_filter[2]) }
                             break;
                         case 'electricity':
-                            Nylon.$['page-plug'].$.list.change_electricity = {
-                                mac_address: msg_filter[1],
-                                volt: Number(msg_filter[2]),
-                                amp: Number(msg_filter[3]),
-                                power: Number(msg_filter[4]),
-                                watt: Number(msg_filter[5])
-                            }
+                            Nylon.dispatch('PLUG_GET_DATA')
+                            // Nylon.$['page-plug'].$.list.change_electricity = {
+                            //     mac_address: msg_filter[1],
+                            //     volt: Number(msg_filter[2]),
+                            //     amp: Number(msg_filter[3]),
+                            //     power: Number(msg_filter[4]),
+                            //     watt: Number(msg_filter[5])
+                            // }
                             break;
                         case 'add':
                             Nylon.dispatch('PLUG_GET_DATA')
@@ -141,8 +144,7 @@
                             Nylon.dispatch('PLUG_GET_DATA')
                             break;
                         // case 'ping':
-                        //     console.log('Ping')
-                        //     Nylon.dispatch('plugGetData')
+                        //     Nylon.dispatch('PLUG_GET_DATA')
                         //     break;
                     }
 
@@ -172,56 +174,10 @@
                 Nylon.dispatch('PLUG_SET_PARAMS', this._params)
                 this.mqtt_connect();
                 Nylon.dispatch('PLUG_GET_DATA')
-                this.ping()
-            }
-
-            ping() {
-                var flag = 0
-                Nylon.$['page-plug'].data_ping = [];
                 setInterval(function () {
-                    if (flag == 0) {
-                        // console.log('SEND_PING_DATA')
-                        Nylon.$['page-plug'].data_ping = [];
-                        Nylon.dispatch('SEND_PING_DATA')
-                        flag++;
-                    }
-                }, 5000)
-                setInterval(function () {
-                    if (flag == 1) {
-                        // console.log(flag)
-                        var data1 = Nylon.$['page-plug'].$.list.data
-                        var data2 = Nylon.$['page-plug'].data_ping
-                        var con_t = []
-                        var con_f = []
-                        if (data2.length == 0) {
-                            for (var i in data1) {
-                                con_f.push(data1[i].id)
-                            }
-                        } else {
-                            for (var i in data1) {
-                                for (var j in data2) {
-                                    if (data1[i].mac_address == data2[j]) {
-                                        con_t.push(data1[i].id)
-                                    } else {
-                                        con_f.push(data1[i].id)
-                                    }
-                                    // console.log(data1[i].mac_address);
-                                    // console.log(data2[j]);
-                                }
-                            }
-                        }
-
-                        var data = { con_f, con_t }
-
-                        Nylon.dispatch('UPDATE_CONNECT', data)
-
-                        flag = 0;
-                    }
-                }, 40000)
-
-
+                    Nylon.dispatch('PLUG_GET_DATA')
+                }, 3000)
             }
-
         }
 
         window.customElements.define(PagePlug.is, PagePlug);
