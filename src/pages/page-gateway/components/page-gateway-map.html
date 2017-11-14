@@ -8,6 +8,8 @@
 <link rel="import" href="../../../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../../components/nylon-toolbar-selector/nylon-toolbar-selector.html">
 <link rel="import" href="../../../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../../../bower_components/google-map/google-map.html">
+<link rel="import" href="../../../../bower_components/google-map/google-map-marker.html">
 
 <link rel="import" href="../../../redux-mixin.html">
 <link rel="import" href="../../../layout/shared-styles.html">
@@ -17,6 +19,10 @@
         <style include="shared-styles">
             :host {
                 display: block;
+            }
+
+            google-map {
+                height: 300px;
             }
         </style>
 
@@ -28,7 +34,9 @@
             </nylon-toolbar-selector>
             <nylon-panel-card id="pc2" slot="content">
                 <div slot="content">
-
+                    <google-map latitude="37.77493" longitude="-122.41942" api-key="AIzaSyCLg7Eueu6MgEWeLXclyYsQtABQ3IQumpw" on-google-map-ready='_mapReady'
+                        fit-to-markers>
+                    </google-map>
                 </div>
                 <app-toolbar slot="footer">
                     <div main-title></div>
@@ -53,10 +61,47 @@
                     i18n: {
                         type: Object,
                         statePath: 'i18n.pageMyView'
+                    },
+                    position: {
+                        type: Object,
+                        value: {
+                            lat: null,
+                            lng: null
+                        }
                     }
                 }
             }
-            
+
+            _mapReady(e) {
+                this.gmap = e.currentTarget.map;
+                // if (this.position.lat == 9999 || this.position.lng == 9999) {
+                navigator.geolocation.getCurrentPosition((xposition) => {
+                    this.position.lat = xposition.coords.latitude;
+                    this.position.lng = xposition.coords.longitude;
+                    this.markerCreated(this.position);
+                });
+                // } else {
+                // this.markerCreated(this.position);
+                // }
+            }
+
+            markerCreated(position) {
+                var c = { lat: parseFloat(position.lat), lng: parseFloat(position.lng) };
+                if (this.gmap) {
+                    if (this.marker != null || this.marker != undefined) {
+                        this.marker.setPosition(c);
+                        this.gmap.setCenter(c);
+                    } else {
+                        this.gmap.setCenter(c);
+                        this.marker = new google.maps.Marker({
+                            position: c,
+                            map: this.gmap
+                            // draggable: true
+                        });
+                    }
+                }
+            }
+
             _closePanelRight() {
                 this.$.pr.close()
             }
