@@ -30,10 +30,11 @@
                 <div slot="content">
                     <div class="row">
                         <div class="col-xs-6 col-sm-6 col-md-3">
-                            <paper-input always-float-label label="Mac Address" class="font" value="{{select.mac_address}}" required="true"></paper-input>
+                            <paper-input always-float-label label="Mac Address" class="font" value="{{select.mac_address}}" char-counter maxlength="13"
+                                required auto-validate error-message="needs some text!"></paper-input>
                         </div>
                         <div class="col-xs-12 col-sm-6 col-md-3">
-                            <paper-input always-float-label label="Desciption" class="font" value="{{select.desciption}}"></paper-input>
+                            <paper-input always-float-label label="Desciption" class="font" value="{{select.desciption}}" required auto-validate error-message="needs some text!"></paper-input>
                         </div>
                     </div>
                 </div>

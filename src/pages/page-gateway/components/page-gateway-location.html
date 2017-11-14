@@ -1,0 +1,129 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../../../components/nylon-panel-card/nylon-panel-card.html">
+<link rel="import" href="../../../components/nylon-panel-right/nylon-panel-right.html">
+<link rel="import" href="../../../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../../bower_components/iron-icons/communication-icons.html">
+<link rel="import" href="../../../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../components/nylon-toolbar-selector/nylon-toolbar-selector.html">
+<link rel="import" href="../../../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../../../bower_components/google-map/google-map.html">
+<link rel="import" href="../../../../bower_components/google-map/google-map-marker.html">
+
+<link rel="import" href="../../../redux-mixin.html">
+<link rel="import" href="../../../layout/shared-styles.html">
+
+<dom-module id="page-gateway-location">
+    <template>
+        <style include="shared-styles">
+            :host {
+                display: block;
+            }
+
+            google-map {
+                height: 450px;
+            }
+        </style>
+
+        <nylon-panel-right id="pr" title="All Location Gateway">
+            <nylon-toolbar-selector slot="header">
+                <paper-tabs selected="0" scrollable>
+                    <paper-tab class="font">Location</paper-tab>
+                </paper-tabs>
+            </nylon-toolbar-selector>
+            <nylon-panel-card id="pc2" slot="content">
+                <div slot="content">
+                    <google-map api-key="AIzaSyCLg7Eueu6MgEWeLXclyYsQtABQ3IQumpw" on-google-map-ready='_mapReady' fit-to-markers></google-map>
+                </div>
+            </nylon-panel-card>
+        </nylon-panel-right>
+
+
+    </template>
+
+    <script>
+        class PageGatewayLocation extends ReduxMixin(Polymer.Element) {
+            static get is() { return 'page-gateway-location'; }
+            static get properties() {
+                return {
+                    i18n: {
+                        type: Object,
+                        statePath: 'i18n.pageMyView'
+                    },
+                    position: {
+                        type: Object,
+                        value: {
+                            lat: null,
+                            lng: null
+                        }
+                    }
+                }
+            }
+
+            _mapReady(e) {
+                this.gmap = e.currentTarget.map;
+                // // if (this.position.lat == 9999 || this.position.lng == 9999) {
+                // navigator.geolocation.getCurrentPosition((xposition) => {
+                //     this.position.lat = xposition.coords.latitude;
+                //     this.position.lng = xposition.coords.longitude;
+                //     this.markerCreated(this.position);
+                // console.log(this.position);
+                //     // this.set('position.lat', this.position.lat + 0.2)
+                //     // console.log(this.position.lat);
+                var a = [
+                    { lat: 13.8211924, lng: 100.5127491 },
+                    { lat: 13.8711924, lng: 100.5127491 },
+                    { lat: 13.9211924, lng: 100.5127491 }
+                ]
+                var self = this
+                setTimeout(function () {
+                    for (let index = 0; index < a.length; index++) {
+                        const element = a[index];
+                        console.log(element);
+
+                        setTimeout(function () {
+                            self.markerCreated(element);
+                        }, 1000)
+                    }
+                }, 3000)
+                // })
+
+
+
+                // } else {
+                // this.markerCreated(this.position);
+                // }
+            }
+
+            markerCreated(position) {
+                var c = { lat: parseFloat(position.lat), lng: parseFloat(position.lng) };
+                if (this.gmap) {
+                    // if (this.marker != null || this.marker != undefined) {
+                    //     this.marker.setPosition(c);
+                    //     this.gmap.setCenter(c);
+                    // } else {
+                        console.log('XXXXXXX');
+                        this.gmap.setCenter(c);
+                        this.marker = new google.maps.Marker({
+                            position: c,
+                            map: this.gmap
+                            // draggable: true
+                        });
+                        // this.marker = new google.maps.Marker({
+                        //     position: new google.maps.LatLng(c),
+                        //     map: this.gmap
+                        // });
+                    // }
+                }
+            }
+
+            _closePanelRight() {
+                this.$.pr.close()
+            }
+
+        }
+        window.customElements.define(PageGatewayLocation.is, PageGatewayLocation);
+    </script>
+</dom-module>

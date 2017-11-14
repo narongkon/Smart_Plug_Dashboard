@@ -19,7 +19,7 @@
 
     <nylon-dialog></nylon-dialog>
 
-    <layout-main id="layoutMain">
+    <layout-main id="layoutMain" path-name="[[pathName]]">
       <nylon-pages id="nylonPage">
         <!-- <page-view path="/"></page-view> -->
         <page-plug path="/plug/:id"></page-plug>
@@ -37,6 +37,26 @@
     class NylonInit extends Polymer.Element {
 
       static get is() { return 'nylon-init' }
+      static get properties() {
+        return {
+          pathName: {
+            type: String,
+            observer: '_pathNameChange'
+          },
+          login: {
+            type: Boolean,
+            value: true
+          },
+          dashboard: {
+            type: Boolean,
+            value: false
+          }
+        }
+      }
+
+      _pathNameChange(e){
+        console.log(e);
+      }
 
     }
 
