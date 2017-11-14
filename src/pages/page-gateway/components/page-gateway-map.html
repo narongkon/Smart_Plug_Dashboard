@@ -12,7 +12,7 @@
 <link rel="import" href="../../../redux-mixin.html">
 <link rel="import" href="../../../layout/shared-styles.html">
 
-<dom-module id="page-gateway-right">
+<dom-module id="page-gateway-map">
     <template>
         <style include="shared-styles">
             :host {
@@ -20,7 +20,7 @@
             }
         </style>
 
-        <nylon-panel-right id="pr" title="Manage Gateway">
+        <nylon-panel-right id="pr" title="Location Gateway">
             <nylon-toolbar-selector slot="header">
                 <paper-tabs selected="0" scrollable>
                     <paper-tab class="font">Edit</paper-tab>
@@ -28,14 +28,7 @@
             </nylon-toolbar-selector>
             <nylon-panel-card id="pc2" slot="content">
                 <div slot="content">
-                    <div class="row">
-                        <div class="col-xs-6 col-sm-6 col-md-3">
-                            <paper-input always-float-label label="Mac Address" class="font" value="{{select.mac_address}}"></paper-input>
-                        </div>
-                        <div class="col-xs-12 col-sm-6 col-md-3">
-                            <paper-input always-float-label label="Desciption" class="font" value="{{select.desciption}}"></paper-input>
-                        </div>
-                    </div>
+
                 </div>
                 <app-toolbar slot="footer">
                     <div main-title></div>
@@ -48,32 +41,27 @@
                 </app-toolbar>
             </nylon-panel-card>
         </nylon-panel-right>
+
+
     </template>
 
     <script>
-        class PageGatewayRight extends ReduxMixin(Polymer.Element) {
-            static get is() { return 'page-gateway-right'; }
+        class PageGatewayMap extends ReduxMixin(Polymer.Element) {
+            static get is() { return 'page-gateway-map'; }
             static get properties() {
                 return {
-                    select: {
+                    i18n: {
                         type: Object,
-                        statePath: 'gateway.select'
+                        statePath: 'i18n.pageMyView'
                     }
                 }
             }
-
+            
             _closePanelRight() {
                 this.$.pr.close()
             }
 
-            _saveData() {
-                if (!this.select.id || this.select.id == "") {
-                    Nylon.dispatch('GATEWAY_INSERT_DATA', this.select)
-                } else {
-                    Nylon.dispatch('GATEWAY_EDIT_DATA', this.select)
-                }
-            }
         }
-        window.customElements.define(PageGatewayRight.is, PageGatewayRight);
+        window.customElements.define(PageGatewayMap.is, PageGatewayMap);
     </script>
 </dom-module>

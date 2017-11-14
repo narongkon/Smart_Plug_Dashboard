@@ -8,11 +8,11 @@
 <link rel="import" href="../../../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../../bower_components/iron-icons/maps-icons.html">
 <link rel="import" href="../../../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../../../../bower_components/paper-toggle-button/paper-toggle-button.html">
 
 <link rel="import" href="../../../redux-mixin.html">
-
 <link rel="import" href="../../../layout/shared-styles.html">
 
 <dom-module id="page-gateway-list">
@@ -51,6 +51,8 @@
                     <template class="header">Manage</template>
                     <template>
                         <div>
+                            <paper-icon-button icon="maps:pin-drop" on-click="_map"></paper-icon-button>
+                            <paper-icon-button icon="icons:assessment" on-click="_graph"></paper-icon-button>
                             <paper-icon-button icon="create" on-click="_selectData"></paper-icon-button>
                             <paper-icon-button icon="delete" on-click="_delData"></paper-icon-button>
                         </div>
@@ -107,6 +109,14 @@
 
             _index(i) {
                 return i + 1;
+            }
+
+            _map() {
+                Nylon.$['page-gateway'].$.map.$.pr.open()
+            }
+
+            _graph() {
+
             }
 
         }
