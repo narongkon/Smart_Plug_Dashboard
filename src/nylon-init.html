@@ -8,7 +8,7 @@
 <link rel="lazy-import" href="./pages/page-404/page-404.html">
 <link rel="lazy-import" href="./pages/page-plug/page-plug.html">
 <link rel="lazy-import" href="./pages/page-gateway/page-gateway.html">
-
+<link rel="lazy-import" href="./pages/page-login/page-login.html">
 <dom-module id="nylon-init">
   <template>
     <style>
@@ -18,19 +18,19 @@
     </style>
 
     <nylon-dialog></nylon-dialog>
-    
+
     <layout-main id="layoutMain">
       <nylon-pages id="nylonPage">
         <!-- <page-view path="/"></page-view> -->
-        <page-plug path="/:id"></page-plug>
-        <page-gateway path="/"></page-gateway>
+        <page-plug path="/plug/:id"></page-plug>
+        <page-gateway path="/plug"></page-gateway>
         <!-- <page-view2 path="/"></page-view2> -->
+        <page-login path="/login"></page-login>
         <page-404 path="*"></page-404>
+
       </nylon-pages>
     </layout-main>
-    
 
-    
   </template>
 
   <script>

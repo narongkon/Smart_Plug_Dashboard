@@ -8,11 +8,13 @@
 <link rel="import" href="../../../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../../components/nylon-toolbar-selector/nylon-toolbar-selector.html">
 <link rel="import" href="../../../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../../components/nylon-c3/nylon-c3.html">
+<link rel="import" href="../../../../bower_components/vaadin-combo-box/vaadin-combo-box.html">
 
 <link rel="import" href="../../../redux-mixin.html">
 <link rel="import" href="../../../layout/shared-styles.html">
 
-<dom-module id="page-gateway-right">
+<dom-module id="page-gateway-graph">
     <template>
         <style include="shared-styles">
             :host {
@@ -23,36 +25,22 @@
         <nylon-panel-right id="pr" title="Manage Gateway">
             <nylon-toolbar-selector slot="header">
                 <paper-tabs selected="0" scrollable>
-                    <paper-tab class="font">Edit</paper-tab>
+                    <paper-tab class="font">Graph</paper-tab>
                 </paper-tabs>
             </nylon-toolbar-selector>
             <nylon-panel-card id="pc2" slot="content">
                 <div slot="content">
-                    <div class="row">
-                        <div class="col-xs-6 col-sm-6 col-md-3">
-                            <paper-input always-float-label label="Mac Address" class="font" value="{{select.mac_address}}" required="true"></paper-input>
-                        </div>
-                        <div class="col-xs-12 col-sm-6 col-md-3">
-                            <paper-input always-float-label label="Desciption" class="font" value="{{select.desciption}}"></paper-input>
-                        </div>
-                    </div>
+                    <!-- <vaadin-combo-box id="demo1-1" label="Element"></vaadin-combo-box> -->
+                    <nylon-c3 slot="content" id="chart1"></nylon-c3>
                 </div>
-                <app-toolbar slot="footer">
-                    <div main-title></div>
-                    <paper-button raised on-click="_closePanelRight" class="font">
-                        <iron-icon icon="clear"></iron-icon>&nbsp;&nbsp;CANCEL
-                    </paper-button>
-                    <paper-button raised class="btn-success font" on-click="_saveData">
-                        <iron-icon icon="check"></iron-icon>&nbsp;&nbsp;SAVE
-                    </paper-button>
-                </app-toolbar>
+
             </nylon-panel-card>
         </nylon-panel-right>
     </template>
 
     <script>
-        class PageGatewayRight extends ReduxMixin(Polymer.Element) {
-            static get is() { return 'page-gateway-right'; }
+        class PageGatewayGraph extends ReduxMixin(Polymer.Element) {
+            static get is() { return 'page-gateway-graph'; }
             static get properties() {
                 return {
                     select: {
@@ -60,6 +48,20 @@
                         statePath: 'gateway.select'
                     }
                 }
+            }
+
+            connectedCallback() {
+                super.connectedCallback()
+
+                this.$.chart1.generate({
+                    data: {
+                        columns: [
+                            ['data1', 30, 200, 100, 400, 150, 250],
+                            ['data2', 50, 20, 10, 40, 15, 25]
+                        ]
+                    }
+                })
+
             }
 
             _closePanelRight() {
@@ -74,6 +76,6 @@
                 }
             }
         }
-        window.customElements.define(PageGatewayRight.is, PageGatewayRight);
+        window.customElements.define(PageGatewayGraph.is, PageGatewayGraph);
     </script>
 </dom-module>
