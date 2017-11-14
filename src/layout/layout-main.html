@@ -15,7 +15,7 @@
 
 <dom-module id="layout-main">
     <template>
-        <style>
+        <style include="shared-styles">
              :host {
                 --app-primary-color: #0288D1;
                 --app-secondary-color: black;
@@ -59,8 +59,8 @@
         <app-header slot="header" fixed condenses effects="waterfall">
             <app-toolbar class="header">
                 <paper-icon-button icon="my-icons:menu" drawer-toggle on-click="toogleMenu"></paper-icon-button>
-                <div main-title>[[i18n.common.myApp]]</div>
-                <paper-button toggles on-click="changeLanguage">[[i18n.language]]</paper-button>
+                <div main-title class="font">[[i18n.common.myApp]]</div>
+                <paper-button class="font" toggles on-click="changeLanguage">[[i18n.language]]</paper-button>
             </app-toolbar>
             <template is="dom-if" if="[[progressEnable]]">
                 <paper-progress id="progress" value="[[progressValue]]" indeterminate="[[progressIndeterminate]]"></paper-progress>

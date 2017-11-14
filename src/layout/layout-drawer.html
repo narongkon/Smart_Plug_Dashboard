@@ -13,7 +13,7 @@
 
 <dom-module id="layout-drawer">
     <template>
-        <style>
+        <style include="shared-styles">
              :host {
                 display: block;
                 z-index: 1;
@@ -52,11 +52,11 @@
                     <iron-icon icon="bookmark-border" slot="item-icon"></iron-icon>
                     View One
                 </paper-icon-item> -->
-                <paper-icon-item  name="page-view2" href="/plug" on-click="_redirect">
+                <paper-icon-item  name="page-view2" href="/plug" on-click="_redirect" class="font">
                     <iron-icon src="https://icon-icons.com/icons2/586/PNG/512/plug-wire_icon-icons.com_55283.png" slot="item-icon"></iron-icon>
                     Smart Plug
                 </paper-icon-item>
-                <paper-icon-item  name="page-view2" href="/charger" on-click="_redirect">
+                <paper-icon-item  name="page-view2" href="/charger" on-click="_redirect" class="font">
                     <iron-icon src="https://d30y9cdsu7xlg0.cloudfront.net/png/2061-200.png" slot="item-icon"></iron-icon>
                     Smart Charger
                 </paper-icon-item>
