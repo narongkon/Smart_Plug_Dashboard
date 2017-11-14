@@ -4,6 +4,7 @@
 <link rel="import" href="../../../components/nylon-panel-right/nylon-panel-right.html">
 <link rel="import" href="../../../../bower_components/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../../bower_components/iron-icons/communication-icons.html">
 <link rel="import" href="../../../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../../../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../../components/nylon-toolbar-selector/nylon-toolbar-selector.html">
@@ -29,11 +30,20 @@
         <nylon-panel-right id="pr" title="Location Gateway">
             <nylon-toolbar-selector slot="header">
                 <paper-tabs selected="0" scrollable>
-                    <paper-tab class="font">Edit</paper-tab>
+                    <paper-tab class="font">Location</paper-tab>
                 </paper-tabs>
             </nylon-toolbar-selector>
             <nylon-panel-card id="pc2" slot="content">
                 <div slot="content">
+                    <vaadin-combo-box id="demo1-1" label="Element"></vaadin-combo-box>
+                    <div class="row end-md">
+                        <paper-button raised on-click="draggableMarker" class="font" style="margin-bottom: 10px;">
+                            <iron-icon id="drag" icon="communication:location-off"></iron-icon>&nbsp;&nbsp;MARKER
+                        </paper-button>
+                        <paper-button raised class="btn-info font" on-click="_saveData">
+                            <iron-icon icon="maps:my-location"></iron-icon>&nbsp;&nbsp;MY LOCATION
+                        </paper-button>
+                    </div>
                     <google-map latitude="37.77493" longitude="-122.41942" api-key="AIzaSyCLg7Eueu6MgEWeLXclyYsQtABQ3IQumpw" on-google-map-ready='_mapReady'
                         fit-to-markers>
                     </google-map>
@@ -99,6 +109,39 @@
                             // draggable: true
                         });
                     }
+                }
+            }
+
+            draggableMarker() {
+                if (this.marker.getDraggable() === false || this.marker.getDraggable() == undefined) {
+                    this.$.drag.icon = "communication:location-on";
+                    this.marker.setDraggable(true);
+                    this.dispatchEvent(
+                        new CustomEvent('_draggable', {
+                            bubbles: true, composed: true,
+                            detail: {
+                                enabled: false
+                            }
+                        })
+                    );
+                    var self = this;
+                    // this.marker.addListener('dragend', function (event) {
+                    //     self.position.lat = this.position.lat();
+                    //     self.position.lng = this.position.lng();
+                    //     self.updateLocation();
+                    // });
+                } else {
+                    this.$.drag.icon = "communication:location-off";
+                    this.marker.setDraggable(false);
+                    // this.dispatchEvent(
+                    //     new CustomEvent('_draggable', {
+                    //         bubbles: true, composed: true,
+                    //         detail: {
+                    //             enabled: true
+                    //         }
+                    //     })
+                    // );
+                    // google.maps.event.clearInstanceListeners(this.marker);
                 }
             }
 
