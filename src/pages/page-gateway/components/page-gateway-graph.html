@@ -10,6 +10,7 @@
 <link rel="import" href="../../../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../../components/nylon-c3/nylon-c3.html">
 <link rel="import" href="../../../../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../../../bower_components/iron-pages/iron-pages.html">
 
 <link rel="import" href="../../../redux-mixin.html">
 <link rel="import" href="../../../layout/shared-styles.html">
@@ -22,21 +23,60 @@
             }
         </style>
 
-        <nylon-panel-right id="pr" title="Manage Gateway">
+        <nylon-panel-right id="pr" title="Graph Gateway">
             <nylon-toolbar-selector slot="header">
                 <paper-tabs selected="0" scrollable>
                     <paper-tab class="font">Graph</paper-tab>
                 </paper-tabs>
             </nylon-toolbar-selector>
+
             <nylon-panel-card id="pc2" slot="content">
                 <div slot="content">
-                    <!-- <vaadin-combo-box id="demo1-1" label="Element"></vaadin-combo-box> -->
                     <div class="row">
-                        <div class="col-md-6">
-                            <h3 style="text-align: center; color:#03A9F4;">Watt/Hour (Wh)</h3>
+                        <!-- <div style="margin-left: 3%;" class="col-md-3">
+                            <vaadin-combo-box always-float-label id="demo1-1" label="Graph" slot="content" items="[[type]]" item-label-path="name" placeholder="Select Graph"
+                                value="{{select_type}}">
+                                <template>
+                                    [[item.name]]
+                                </template>
+                            </vaadin-combo-box>
+                        </div> -->
+                        <paper-button style="margin-left: 5%;" raised on-click="select_type_change" class="font" id="sum">SUMMARY</paper-button>
+                        <paper-button raised on-click="select_type_change" class="font" id="15m">15 MINNUTE</paper-button>
+                        <paper-button raised on-click="select_type_change" class="font" id="1h">1 HOUR</paper-button>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h3 style="text-align: center; color:#03A9F4;">
+                                Active Power (kW) [[graph_label]]
+                            </h3>
                             <nylon-c3 slot="content" id="chart1"></nylon-c3>
                         </div>
-                        <div class="col-md-6">
+                    </div>
+
+                    <!-- <iron-pages selected="{{select_type}}" attr-for-selected="name">
+                        <div name="sum">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h3 style="text-align: center; color:#03A9F4;">
+                                        [[graph_label]]
+                                    </h3>
+                                    <nylon-c3 slot="content" id="chart1"></nylon-c3>
+                                </div>
+                            </div>
+                        </div>
+                        <div name="15m">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h3 style="text-align: center; color:#03A9F4;">[[graph_label]]</h3>
+                                    <nylon-c3 slot="content" id="chart2"></nylon-c3>
+                                </div>
+                            </div>
+                        </div>
+                        <div name="1h">Three</div>
+                    </iron-pages> -->
+
+                    <!-- <div class="col-md-6">
                             <h3 style="text-align: center; color:#03A9F4;">Ampere (A)</h3>
                             <nylon-c3 slot="content" id="chart2"></nylon-c3>
                         </div>
@@ -47,9 +87,7 @@
                         <div class="col-md-6">
                             <h3 style="text-align: center; color:#03A9F4;">Power (P)</h3>
                             <nylon-c3 slot="content" id="chart4"></nylon-c3>
-                        </div>
-                    </div>
-
+                        </div> -->
                 </div>
 
             </nylon-panel-card>
@@ -64,96 +102,253 @@
                     select: {
                         type: Object,
                         statePath: 'gateway.select'
+                    },
+                    type: {
+                        type: Array,
+                        value: [
+                            { value: 'sum', name: "Summary" },
+                            { value: '15m', name: "15 Minnute" },
+                            { value: '1h', name: "1 Hour" }
+                        ]
+                    },
+                    select_type: {
+                        type: String,
+                        value: 'sum',
+                        observer: 'select_type_change'
+                    },
+                    graph_label: {
+                        type: String,
+                        value: ''
+                    }
+                }
+            }
+
+            select_type_change(e) {
+                if (e.target) {
+
+                    let self = this
+                    let date = new Date()
+                    let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                    let monthNames = ["January", "February", "March", "April", "May", "June",
+                        "July", "August", "September", "October", "November", "December"];
+
+                    if (e.target.id === "sum") {
+                        setTimeout(function () {
+                            self.set('graph_label', days[date.getDay()] + ', ' + monthNames[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear() + ' (Today)')
+                            self.$.chart1.generate({
+                                data: {
+                                    columns: [
+                                        ['A', 100, 200, 100, 400, 200, 100, 400, 200, 100, 400, 200, 100, 400, 200, 100, 400, 200, 100, 400, 200, 100, 400, 100, 400],
+                                        ['B', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 500, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                                        ['C', 50, 200, 300, 400, 200, 100, 200, 200, 100, 400, 600, 100, 400, 200, 100, 400, 200, 100, 100, 100, 100, 300, 100, 50],
+                                        ['D', 100, 100, 200, 300, 50, 600, 300, 400, 400, 500, 300, 200, 500, 300, 200, 500, 100, 100, 200, 200, 200, 100, 100, 400]
+                                    ],
+                                    type: 'bar',
+                                    types: {
+                                        C: 'spline',
+                                        D: 'spline'
+                                    },
+                                },
+                                axis: {
+                                    x: {
+                                        tick: {
+                                            rotate: 75,
+                                            multiline: false
+                                        },
+                                        height: 70,
+                                        label: 'Time',
+                                        type: 'category',
+                                        categories: ['01.00', '02.00', '03.00', '04.00', '05.00', '06.00',
+                                            '07.00', '08.00', '09.00', '10.00', '11.00', '12.00',
+                                            '13.00', '14.00', '15.00', '16.00', '17.00', '18.00',
+                                            '19.00', '20.00', '21.00', '22.00', '23.00', '00.00']
+                                    },
+                                    y: {
+                                        label: {
+                                            text: 'Active Power (kW)',
+                                            position: 'outer-center'
+
+                                        }
+                                    }
+                                },
+                                color: {
+                                    pattern: ['#03A9F4', '#FF9800', '#AEEA00', '#795548']
+                                }
+                            })
+                        }, 200)
+
+                    } else if (e.target.id === '15m') {
+
+                        var time_h = date.getHours()
+                        var time_m = date.getMinutes()
+                        var time_array = []
+                        var i = 14
+                        for (let index = 0; index < 15; index++) {
+                            //  =
+
+                            time_m = time_m - 1
+                            if (time_m == -1) {
+                                time_h = time_h - 1
+                            }
+                            time_array[i] = time_h + ':' + time_m
+                            i = i - 1
+                            // console.log(time_m)
+
+                        }
+                        setTimeout(function () {
+                            self.set('graph_label', days[date.getDay()] + ', ' + monthNames[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear() + ' ' + date.getHours() + ":" + date.getMinutes())
+                            self.$.chart1.generate({
+                                data: {
+                                    columns: [
+                                        ['A', 100, 200, 100, 400, 200, 100, 400, 200, 100, 400, 200, 100, 400, 200, 100],
+                                        ['B', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 500, 0, 0],
+                                        ['C', 50, 200, 300, 400, 200, 100, 200, 200, 100, 400, 600, 100, 400, 200, 100],
+                                        ['D', 100, 100, 200, 300, 50, 600, 300, 400, 400, 500, 300, 200, 500, 300, 200]
+                                    ],
+                                    type: 'bar',
+                                    types: {
+                                        C: 'spline',
+                                        D: 'spline'
+                                    },
+                                },
+                                axis: {
+                                    x: {
+                                        tick: {
+                                            rotate: 75,
+                                            multiline: false
+                                        },
+                                        height: 70,
+                                        label: 'Time',
+                                        type: 'category',
+                                        categories: time_array
+                                    },
+                                    y: {
+                                        label: {
+                                            text: 'Active Power (kW)',
+                                            position: 'outer-center'
+
+                                        }
+                                    }
+                                },
+                                color: {
+                                    pattern: ['#03A9F4', '#FF9800', '#AEEA00', '#795548']
+                                }
+                            })
+                        }, 200)
+                    } else if (e.target.id === '1h') {
+
+                        var time_h = date.getHours()
+                        var time_m = date.getMinutes()
+                        var time_array = []
+                        var i = 14
+                        for (let index = 0; index < 15; index++) {
+                            //  =
+
+                            time_m = time_m - 1
+                            if (time_m == -1) {
+                                time_h = time_h - 1
+                            }
+                            time_array[i] = time_h + ':' + time_m
+                            i = i - 1
+                            // console.log(time_m)
+
+                        }
+                        setTimeout(function () {
+                            self.set('graph_label', days[date.getDay()] + ', ' + monthNames[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear() + ' ' + date.getHours() + ":" + date.getMinutes())
+                            self.$.chart1.generate({
+                                data: {
+                                    columns: [
+                                        ['A', 100, 200, 100, 400, 200, 100, 400, 200, 100, 400, 200, 100, 400, 200, 100],
+                                        ['B', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 500, 0, 0],
+                                        ['C', 50, 200, 300, 400, 200, 100, 200, 200, 100, 400, 600, 100, 400, 200, 100],
+                                        ['D', 100, 100, 200, 300, 50, 600, 300, 400, 400, 500, 300, 200, 500, 300, 200]
+                                    ],
+                                    type: 'bar',
+                                    types: {
+                                        C: 'spline',
+                                        D: 'spline'
+                                    },
+                                },
+                                axis: {
+                                    x: {
+                                        tick: {
+                                            rotate: 75,
+                                            multiline: false
+                                        },
+                                        height: 70,
+                                        label: 'Time',
+                                        type: 'category',
+                                        categories: time_array
+                                    },
+                                    y: {
+                                        label: {
+                                            text: 'Active Power (kW)',
+                                            position: 'outer-center'
+
+                                        }
+                                    }
+                                },
+                                color: {
+                                    pattern: ['#03A9F4', '#FF9800', '#AEEA00', '#795548']
+                                }
+                            })
+                        }, 200)
                     }
                 }
             }
 
             connectedCallback() {
                 super.connectedCallback()
-                
-                this.$.chart1.generate({
-                    data: {
-                        columns: [
-                            ['October 2017', 100, 200, 100, 400],
-                            ['November 2017', 50, 20, 10, 40]
-                        ]
-                    },
-                    axis: {
-                        x: {
-                            label: 'Time',
-                            type: 'category',
-                            categories: ['00.00-05.59', '06.00-11.59', '12.00-17.59', '18.00-23.59']
+
+                let self = this
+                let date = new Date()
+                let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                let monthNames = ["January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December"];
+
+                setTimeout(function () {
+                    self.set('graph_label', days[date.getDay()] + ', ' + monthNames[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear() + ' (Today)')
+                    self.$.chart1.generate({
+                        data: {
+                            columns: [
+                                ['A', 100, 200, 100, 400, 200, 100, 400, 200, 100, 400, 200, 100, 400, 200, 100, 400, 200, 100, 400, 200, 100, 400, 100, 400],
+                                ['B', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 500, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                                ['C', 50, 200, 300, 400, 200, 100, 200, 200, 100, 400, 600, 100, 400, 200, 100, 400, 200, 100, 100, 100, 100, 300, 100, 50],
+                                ['D', 100, 100, 200, 300, 50, 600, 300, 400, 400, 500, 300, 200, 500, 300, 200, 500, 100, 100, 200, 200, 200, 100, 100, 400]
+                            ],
+                            type: 'bar',
+                            types: {
+                                C: 'spline',
+                                D: 'spline'
+                            },
                         },
-                        y: {
-                            label: 'Watt/Hour (Wh)'
-                        }
-                    },
-                    color: {
-                        pattern: ['#03A9F4', '#FF9800']
-                    }
-                })
+                        axis: {
+                            x: {
+                                tick: {
+                                    rotate: 75,
+                                    multiline: false
+                                },
+                                height: 70,
+                                label: 'Time',
+                                type: 'category',
+                                categories: ['01.00', '02.00', '03.00', '04.00', '05.00', '06.00',
+                                    '07.00', '08.00', '09.00', '10.00', '11.00', '12.00',
+                                    '13.00', '14.00', '15.00', '16.00', '17.00', '18.00',
+                                    '19.00', '20.00', '21.00', '22.00', '23.00', '00.00']
+                            },
+                            y: {
+                                label: {
+                                    text: 'Active Power (kW)',
+                                    position: 'outer-center'
 
-                this.$.chart2.generate({
-                    data: {
-                        columns: [
-                            ['October 2017', 1, 5, 16, 15],
-                            ['November 2017', 13, 12, 16, 5]
-                        ]
-                    },
-                    axis: {
-                        x: {
-                            label: 'Time',
-                            type: 'category',
-                            categories: ['00.00-05.59', '06.00-11.59', '12.00-17.59', '18.00-23.59']
+                                }
+                            }
                         },
-                        y: {
-                            label: 'Ampere (A)'
+                        color: {
+                            pattern: ['#03A9F4', '#FF9800', '#AEEA00', '#795548']
                         }
-                    },
-                    color: {
-                        pattern: ['#03A9F4', '#FF9800']
-                    }
-                })
-
-                this.$.chart3.generate({
-                    data: {
-                        columns: [
-                            ['Low', 30, 0.5],
-                            ['Peak', 300, 230]
-                        ],
-                        type: 'bar'
-                    },
-                    bar: {
-                        width: {
-                            ratio: 0.5
-                        }
-                    },
-                    axis: {
-                        x: {
-                            label: 'Time',
-                            type: 'category',
-                            categories: ['October 2017', 'November 2017']
-                        },
-                        y: {
-                            label: 'Volt (V)'
-                        }
-                    },
-                    color: {
-                        pattern: ['#03A9F4', '#FF9800']
-                    }
-                })
-
-
-                this.$.chart4.generate({
-                    data: {
-                        columns: [
-                            ['data1', 30, 200, 100, 400, 150, 250],
-                            ['data2', 130, 100, 140, 200, 150, 50]
-                        ],
-                        type: 'spline'
-                    }
-                })
-
+                    })
+                }, 6000)
             }
 
             _closePanelRight() {

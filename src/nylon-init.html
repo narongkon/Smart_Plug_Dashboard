@@ -18,8 +18,7 @@
     </style>
 
     <nylon-dialog></nylon-dialog>
-
-    <layout-main id="layoutMain" path-name="[[pathName]]">
+    <layout-main id="layoutMain">
       <nylon-pages id="nylonPage">
         <!-- <page-view path="/"></page-view> -->
         <page-plug path="/plug/:id"></page-plug>
@@ -27,7 +26,6 @@
         <!-- <page-view2 path="/"></page-view2> -->
         <page-login path="/login"></page-login>
         <page-404 path="*"></page-404>
-
       </nylon-pages>
     </layout-main>
 
@@ -39,24 +37,10 @@
       static get is() { return 'nylon-init' }
       static get properties() {
         return {
-          pathName: {
-            type: String,
-            observer: '_pathNameChange'
-          },
-          login: {
-            type: Boolean,
-            value: true
-          },
-          dashboard: {
-            type: Boolean,
-            value: false
-          }
+
         }
       }
 
-      _pathNameChange(e){
-        console.log(e);
-      }
 
     }
 

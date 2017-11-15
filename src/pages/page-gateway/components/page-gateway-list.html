@@ -30,7 +30,7 @@
                 <paper-button raised class="btn font" on-click="_allLocation">
                     <iron-icon icon="maps:place"></iron-icon>&nbsp;&nbsp;Location
                 </paper-button>
-                <paper-button raised class="btn-primary font" on-click="_openPanelRightx">
+                <paper-button raised class="btn-primary font" on-click="_openPanelRight">
                     <iron-icon icon="add"></iron-icon>&nbsp;&nbsp;INSERT
                 </paper-button>
             </app-toolbar>
@@ -86,7 +86,7 @@
 
             _select_item(e) {
                 if (e.detail.value != null) {
-                    Nylon.redirect(e.detail.value.mac_address)
+                    Nylon.redirect("/plug/" + e.detail.value.mac_address)
                 }
             }
 
