@@ -40,6 +40,7 @@
     "google-map": "GoogleWebComponents/google-map#^2.0.2",
     "vaadin-material-theme": "vaadin/vaadin-material-theme#^0.3.0",
     "vaadin-combo-box": "vaadin/vaadin-combo-box#^2.0.0",
-    "paper-spinner": "PolymerElements/paper-spinner#^2.0.0"
+    "paper-spinner": "PolymerElements/paper-spinner#^2.0.0",
+    "polymerfire": "firebase/polymerfire#^2.2.1"
   }
 }

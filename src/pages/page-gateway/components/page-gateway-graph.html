@@ -41,14 +41,14 @@
                                 </template>
                             </vaadin-combo-box>
                         </div> -->
-                        <paper-button style="margin-left: 5%;" raised on-click="select_type_change" class="font" id="sum">SUMMARY</paper-button>
+                        <paper-button raised on-click="select_type_change" class="font" id="sum">SUMMARY</paper-button>
                         <paper-button raised on-click="select_type_change" class="font" id="15m">15 MINNUTE</paper-button>
                         <paper-button raised on-click="select_type_change" class="font" id="1h">1 HOUR</paper-button>
                     </div>
                     <div class="row">
                         <div class="col-md-12">
                             <h3 style="text-align: center; color:#03A9F4;">
-                                Active Power (kW) [[graph_label]]
+                                [[graph_label]]
                             </h3>
                             <nylon-c3 slot="content" id="chart1"></nylon-c3>
                         </div>
@@ -118,7 +118,7 @@
                     },
                     graph_label: {
                         type: String,
-                        value: ''
+                        value: 'Loading ...'
                     }
                 }
             }

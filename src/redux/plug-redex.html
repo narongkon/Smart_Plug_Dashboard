@@ -36,7 +36,7 @@
             // var progress = Nylon.$['page-plug'].$.list.$.pc1.progress({ position: 'top' })
             return dispatch => {
                 var gateway = Nylon.store.getState().plug._params.id;
-                axios.get(`/list?gateway=${gateway}`)
+                axios.get(`/plug?gateway=${gateway}`)
                     .then(
                     res => {
                         // progress(() => {
@@ -61,7 +61,7 @@
         PLUG_INSERT_DATA: function (data) {
             return dispatch => {
                 var progress = Nylon.$['page-plug'].$.right.$.pc2.progress()
-                axios.post('/list', select).then(
+                axios.post('/plug', select).then(
                     res => {
                         Nylon.dispatch('PLUG_GET_DATA')
                         progress(_ => {
@@ -80,7 +80,7 @@
         },
         PLUG_DELETE_DATA: function (id) {
             return dispatch => {
-                axios.delete(`/list?id=${id}`).then(
+                axios.delete(`/plug?id=${id}`).then(
                     res => {
                         Nylon.dispatch('PLUG_GET_DATA')
                     }
@@ -89,7 +89,7 @@
         },
         PLUG_SELECT_DATA: function (id) {
             return dispatch => {
-                axios.get(`/list?id=${id}`).then(
+                axios.get(`/plug?id=${id}`).then(
                     res => {
                         dispatch({ type: 'PLUG_SELECT_DATA', payload: res.data })
                         Nylon.$['page-plug'].$.right.$.pr.open()
@@ -100,7 +100,7 @@
         PLUG_EDIT_DATA: function (select) {
             var progress = Nylon.$['page-plug'].$.right.$.pc2.progress()
             return dispatch => {
-                axios.put('/list', select).then(
+                axios.put(`/plug`, select).then(
                     res => {
                         progress(() => {
                             Nylon.dispatch('PLUG_GET_DATA')
@@ -115,7 +115,7 @@
         },
         PLUG_EDIT_STATUS: function (data) {
             return dispatch => {
-                axios.put('/list', data).then(
+                axios.put('/plug', data).then(
                     res => {
                         Nylon.toast({
                             msg: 'แก้ไขเสร็จสิ้น'
@@ -126,7 +126,7 @@
         },
         PLUG_CONNECT: function (data) {
             return dispatch => {
-                axios.put('/list/connect', data).then(
+                axios.put(`/plug/connect`, data).then(
                     res => {
                         Nylon.toast({
                             msg: 'แก้ไขเสร็จสิ้น'
@@ -140,7 +140,7 @@
                 // console.log('CCCCC', data);
                 // console.log('REDUX PING', Nylon.store.getState().plug._params.id)
                 // var gateway = Nylon.store.getState().plug._params.id;
-                axios.put(`/list/ping`, data).then(
+                axios.put(`/plug/ping`, data).then(
                     res => {
                         Nylon.dispatch('PLUG_GET_DATA')
                     }

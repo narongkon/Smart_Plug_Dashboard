@@ -84,6 +84,10 @@
                 }
             }
 
+            _index(i) {
+                return i + 1;
+            }
+
             _select_item(e) {
                 if (e.detail.value != null) {
                     Nylon.redirect("/plug/" + e.detail.value.mac_address)
@@ -109,10 +113,6 @@
             _openPanelRight() {
                 Nylon.dispatch('GATEWAY_CLEAR_SELECT')
                 Nylon.$['page-gateway'].$.right.$.pr.open()
-            }
-
-            _index(i) {
-                return i + 1;
             }
 
             _map() {

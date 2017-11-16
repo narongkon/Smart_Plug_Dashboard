@@ -1,7 +1,7 @@
 <script>
     Nylon.addReducer('gateway', function (state, action) {
         state = state || {
-            select: {}
+            // select: {}
         }
 
         switch (action.type) {
@@ -25,7 +25,14 @@
 
         GATEWAY_CLEAR_SELECT: function () {
             return dispatch => {
-                dispatch({ type: 'GATEWAY_SELECT_DATA', payload: {} })
+                dispatch({
+                    type: 'GATEWAY_SELECT_DATA', payload: {
+                        position: {
+                            lat: undefined,
+                            lng: undefined
+                        }
+                    }
+                })
             }
         },
         GATEWAY_GET_DATA: function () {
@@ -97,7 +104,6 @@
                         Nylon.toast({
                             msg: 'แก้ไขเสร็จสิ้น'
                         })
-                        axios.get('/subscribe')
                     }
                 )
             }

@@ -1,0 +1,164 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../../../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../../bower_components/iron-icons/communication-icons.html">
+<link rel="import" href="../../../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../../../bower_components/google-map/google-map.html">
+<link rel="import" href="../../../../bower_components/google-map/google-map-marker.html">
+<link rel="import" href="../../../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../components/nylon-panel-card/nylon-panel-card.html">
+
+<link rel="import" href="../../../redux-mixin.html">
+<link rel="import" href="../../../layout/shared-styles.html">
+
+<dom-module id="page-modal-map">
+    <template>
+        <style include="shared-styles">
+            :host {
+                display: block;
+            }
+
+            google-map {
+                height: 400px;
+                width: 700px;
+            }
+        </style>
+        <nylon-panel-card id="pc2" slot="content">
+            <div slot="content">
+
+                <paper-dialog id="modal" modal>
+                    <div class="row end-md">
+                        <paper-button raised on-click="draggableMarker" class="font" style="margin-bottom: 10px;">
+                            <iron-icon id="drag" icon="communication:location-off"></iron-icon>&nbsp;&nbsp;MARKER
+                        </paper-button>
+                        <paper-button raised class="btn-info font" on-click="myLocation">
+                            <iron-icon icon="maps:my-location"></iron-icon>&nbsp;&nbsp;MY LOCATION
+                        </paper-button>
+                    </div>
+                    <google-map style="margin: 10px;" latitude="37.77493" longitude="-122.41942" api-key="AIzaSyCLg7Eueu6MgEWeLXclyYsQtABQ3IQumpw"
+                        on-google-map-ready='_mapReady' fit-to-markers>
+                    </google-map>
+                    <div class="row end-md">
+                        <paper-button raised class="btn-success font" on-click="_saveData">
+                            <iron-icon icon="check"></iron-icon>&nbsp;&nbsp;SAVE
+                        </paper-button>
+                        <paper-button raised class="btn font" dialog-confirm>
+                            <iron-icon icon="clear"></iron-icon>&nbsp;&nbsp;CLOSE
+                        </paper-button>
+                    </div>
+                </paper-dialog>
+
+            </div>
+        </nylon-panel-card>
+
+    </template>
+
+    <script>
+        class PageModalMap extends ReduxMixin(Polymer.Element) {
+            static get is() { return 'page-modal-map'; }
+            static get properties() {
+                return {
+                    i18n: {
+                        type: Object,
+                        statePath: 'i18n.pageMyView'
+                    },
+                    position: {
+                        type: Object,
+                        value: {
+                            lat: 9999,
+                            lng: 9999
+                        }
+                    },
+                    marker: {
+                        type: Object,
+                    },
+                }
+            }
+
+            _mapReady(e) {
+                this.gmap = e.currentTarget.map;
+                if (this.position.lat == 9999 || this.position.lng == 9999) {
+                    navigator.geolocation.getCurrentPosition((xposition) => {
+                        this.position.lat = xposition.coords.latitude;
+                        this.position.lng = xposition.coords.longitude;
+                        this.markerCreated(this.position);
+                    });
+                } else {
+                    this.markerCreated(this.position);
+                }
+            }
+
+            markerCreated(position) {
+                var c = { lat: parseFloat(position.lat), lng: parseFloat(position.lng) };
+                if (this.gmap) {
+                    if (this.marker != null || this.marker != undefined) {
+                        this.marker.setPosition(c);
+                        this.gmap.setCenter(c);
+                    } else {
+                        this.gmap.setCenter(c);
+                        this.marker = new google.maps.Marker({
+                            position: c,
+                            map: this.gmap
+                            // draggable: true
+                        });
+                    }
+                }
+            }
+
+            draggableMarker() {
+                if (this.marker.getDraggable() === false || this.marker.getDraggable() == undefined) {
+                    this.$.drag.icon = "communication:location-on";
+                    this.marker.setDraggable(true);
+                    var self = this;
+                    this.marker.addListener('dragend', function (event) {
+                        console.log(this.position.lat(), this.position.lng());
+                        // self.position.lat = this.position.lat();
+                        // self.position.lng = this.position.lng();
+                        // self.updateLocation();
+                    });
+                } else {
+                    this.$.drag.icon = "communication:location-off";
+                    this.marker.setDraggable(false);
+                }
+            }
+
+            myLocation() {
+                navigator.geolocation.getCurrentPosition((xposition) => {
+                    this.position.lat = xposition.coords.latitude;
+                    this.position.lng = xposition.coords.longitude;
+                    this.markerCreated(this.position);
+                });
+            }
+
+            open() {
+                this.$.modal.open()
+                this.$.drag.icon = "communication:location-off";
+                this.marker.setDraggable(false);
+                if (this.position.lat == 9999 || this.position.lng == 9999) {
+                    navigator.geolocation.getCurrentPosition((xposition) => {
+                        this.position.lat = xposition.coords.latitude;
+                        this.position.lng = xposition.coords.longitude;
+                        this.markerCreated(this.position);
+
+                        this.dispatchEvent(
+                            new CustomEvent('_ok', {
+                                bubbles: true, composed: true,
+                                detail: {
+                                    enabled: false
+                                }
+                            })
+                        );
+                    });
+                } else {
+                    this.markerCreated(this.position);
+                }
+            }
+
+        }
+        window.customElements.define(PageModalMap.is, PageModalMap);
+    </script>
+</dom-module>
