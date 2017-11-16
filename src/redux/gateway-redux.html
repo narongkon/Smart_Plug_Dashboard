@@ -1,7 +1,7 @@
 <script>
     Nylon.addReducer('gateway', function (state, action) {
         state = state || {
-            // select: {}
+            select: {}
         }
 
         switch (action.type) {
@@ -13,6 +13,9 @@
                 return state
             case 'GATEWAY_CLEAR_SELECT':
                 state.select = {}
+                return state
+            case 'GATEWAY_GET_LIST':
+                state.list = action.payload
                 return state
             default:
                 return state
@@ -96,7 +99,7 @@
         GATEWAY_EDIT_DATA: function (select) {
             // var progress = Nylon.$['page-plug'].$.right.$.pc2.progress()
             return dispatch => {
-                axios.put('/gateway', select).then(
+                axios.put(`/gateway`, select).then(
                     res => {
                         Nylon.dispatch('GATEWAY_GET_DATA')
                         Nylon.$['page-gateway'].$.right.$.pr.close()
@@ -108,6 +111,15 @@
                 )
             }
         },
+        GATEWAY_GET_LIST: function () {
+            return dispatch => {
+                axios.get(`/gateway/list`).then(
+                    res => {
+                        dispatch({ type: 'GATEWAY_GET_LIST', payload: res.data })
+                    }
+                )
+            }
+        }
     })
 
 </script>

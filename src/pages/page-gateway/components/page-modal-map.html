@@ -27,34 +27,28 @@
                 width: 700px;
             }
         </style>
-        <nylon-panel-card id="pc2" slot="content">
-            <div slot="content">
 
-                <paper-dialog id="modal" modal>
-                    <div class="row end-md">
-                        <paper-button raised on-click="draggableMarker" class="font" style="margin-bottom: 10px;">
-                            <iron-icon id="drag" icon="communication:location-off"></iron-icon>&nbsp;&nbsp;MARKER
-                        </paper-button>
-                        <paper-button raised class="btn-info font" on-click="myLocation">
-                            <iron-icon icon="maps:my-location"></iron-icon>&nbsp;&nbsp;MY LOCATION
-                        </paper-button>
-                    </div>
-                    <google-map style="margin: 10px;" latitude="37.77493" longitude="-122.41942" api-key="AIzaSyCLg7Eueu6MgEWeLXclyYsQtABQ3IQumpw"
-                        on-google-map-ready='_mapReady' fit-to-markers>
-                    </google-map>
-                    <div class="row end-md">
-                        <paper-button raised class="btn-success font" on-click="_saveData">
-                            <iron-icon icon="check"></iron-icon>&nbsp;&nbsp;SAVE
-                        </paper-button>
-                        <paper-button raised class="btn font" dialog-confirm>
-                            <iron-icon icon="clear"></iron-icon>&nbsp;&nbsp;CLOSE
-                        </paper-button>
-                    </div>
-                </paper-dialog>
-
+        <paper-dialog id="modal" modal>
+            <div class="row end-md">
+                <paper-button raised on-click="draggableMarker" class="font" style="margin-bottom: 10px;">
+                    <iron-icon id="drag" icon="communication:location-off"></iron-icon>&nbsp;&nbsp;MARKER
+                </paper-button>
+                <paper-button raised class="btn-info font" on-click="myLocation">
+                    <iron-icon icon="maps:my-location"></iron-icon>&nbsp;&nbsp;MY LOCATION
+                </paper-button>
             </div>
-        </nylon-panel-card>
-
+            <google-map style="margin: 10px;" latitude="37.77493" longitude="-122.41942" api-key="AIzaSyCLg7Eueu6MgEWeLXclyYsQtABQ3IQumpw"
+                on-google-map-ready='_mapReady' fit-to-markers>
+            </google-map>
+            <div class="row end-md">
+                <paper-button raised class="btn-success font" on-click="_changeLocation">
+                    <iron-icon icon="check"></iron-icon>&nbsp;&nbsp;SAVE
+                </paper-button>
+                <paper-button raised class="btn font" dialog-confirm>
+                    <iron-icon icon="clear"></iron-icon>&nbsp;&nbsp;CLOSE
+                </paper-button>
+            </div>
+        </paper-dialog>
     </template>
 
     <script>
@@ -115,10 +109,8 @@
                     this.marker.setDraggable(true);
                     var self = this;
                     this.marker.addListener('dragend', function (event) {
-                        console.log(this.position.lat(), this.position.lng());
-                        // self.position.lat = this.position.lat();
-                        // self.position.lng = this.position.lng();
-                        // self.updateLocation();
+                        self.position.lat = this.position.lat();
+                        self.position.lng = this.position.lng();
                     });
                 } else {
                     this.$.drag.icon = "communication:location-off";
@@ -134,6 +126,11 @@
                 });
             }
 
+            _changeLocation() {
+                Nylon.dispatch('GATEWAY_CHANGE_POSITION', this.position)
+                this.$.modal.close()
+            }
+
             open() {
                 this.$.modal.open()
                 this.$.drag.icon = "communication:location-off";
@@ -143,15 +140,6 @@
                         this.position.lat = xposition.coords.latitude;
                         this.position.lng = xposition.coords.longitude;
                         this.markerCreated(this.position);
-
-                        this.dispatchEvent(
-                            new CustomEvent('_ok', {
-                                bubbles: true, composed: true,
-                                detail: {
-                                    enabled: false
-                                }
-                            })
-                        );
                     });
                 } else {
                     this.markerCreated(this.position);

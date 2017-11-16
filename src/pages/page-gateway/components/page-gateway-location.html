@@ -35,7 +35,7 @@
             </nylon-toolbar-selector>
             <nylon-panel-card id="pc2" slot="content">
                 <div slot="content">
-                    <google-map api-key="AIzaSyCLg7Eueu6MgEWeLXclyYsQtABQ3IQumpw" on-google-map-ready='_mapReady' fit-to-markers></google-map>
+                    <google-map api-key="AIzaSyCLg7Eueu6MgEWeLXclyYsQtABQ3IQumpw" on-google-map-ready='_mapReady' zoom="7"></google-map>
                 </div>
             </nylon-panel-card>
         </nylon-panel-right>
@@ -58,69 +58,55 @@
                             lat: null,
                             lng: null
                         }
-                    }
+                    },
+                    list: {
+                        type: Object,
+                        statePath: 'gateway.list',
+                        observer: 'list_change'
+                    },
+                    markers: {
+                        type: Array,
+                        value: []
+                    },
+                }
+            }
+
+            list_change(e) {
+                for (let i in this.markers) {
+                    this.markers[i].setMap(null);
+                }
+                this.set('markers', [])
+                let self = this
+                for (let i in e) {
+                    setTimeout(function () {
+                        self.markerCreated(e[i].position);
+                    }, 100)
                 }
             }
 
             _mapReady(e) {
                 this.gmap = e.currentTarget.map;
-                // // if (this.position.lat == 9999 || this.position.lng == 9999) {
-                // navigator.geolocation.getCurrentPosition((xposition) => {
-                //     this.position.lat = xposition.coords.latitude;
-                //     this.position.lng = xposition.coords.longitude;
-                //     this.markerCreated(this.position);
-                // console.log(this.position);
-                //     // this.set('position.lat', this.position.lat + 0.2)
-                //     // console.log(this.position.lat);
-                var a = [
-                    { lat: 13.8211924, lng: 100.5127491 },
-                    { lat: 13.8711924, lng: 100.5127491 },
-                    { lat: 13.9211924, lng: 100.5127491 }
-                ]
-                var self = this
-                setTimeout(function () {
-                    for (let index = 0; index < a.length; index++) {
-                        const element = a[index];
-                        // console.log(element);
-
-                        setTimeout(function () {
-                            self.markerCreated(element);
-                        }, 200)
-                    }
-                }, 1000)
-                // })
-
-
-
-                // } else {
-                // this.markerCreated(this.position);
-                // }
             }
 
             markerCreated(position) {
                 var c = { lat: parseFloat(position.lat), lng: parseFloat(position.lng) };
                 if (this.gmap) {
-                    // if (this.marker != null || this.marker != undefined) {
-                    //     this.marker.setPosition(c);
-                    //     this.gmap.setCenter(c);
-                    // } else {
-                        // console.log('XXXXXXX');
-                        this.gmap.setCenter(c);
-                        this.marker = new google.maps.Marker({
-                            position: c,
-                            map: this.gmap
-                            // draggable: true
-                        });
-                        // this.marker = new google.maps.Marker({
-                        //     position: new google.maps.LatLng(c),
-                        //     map: this.gmap
-                        // });
-                    // }
+                    this.gmap.setCenter(c);
+                    var marker = new google.maps.Marker({
+                        position: c,
+                        map: this.gmap
+                    });
+                    this.push('markers', marker)
                 }
             }
 
             _closePanelRight() {
                 this.$.pr.close()
+            }
+
+            connectedCallback() {
+                super.connectedCallback()
+                console.log('CALLBANK');
             }
 
         }

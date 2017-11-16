@@ -12,6 +12,16 @@ exports.list = (req, res) => {
             return res.status(500).send(err.message);
         })
 }
+exports.all = (req, res) => {
+    const r = req.r;
+    r.table('gateway')
+        .then(function (data) {
+            return res.json(data)
+        })
+        .catch((err) => {
+            return res.status(500).send(err.message);
+        })
+}
 exports.insert = (req, res) => {
     const r = req.r;
     r.table('gateway')
