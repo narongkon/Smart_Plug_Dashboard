@@ -119,7 +119,17 @@
                     }
                 )
             }
-        }
+        },
+        GATEWAY_GET_GRAPH: function () {
+            return dispatch => {
+                axios.get(`/graph/plug`).then(
+                    res => {
+                        console.log('res', res.data);
+                        // dispatch({ type: 'GATEWAY_GET_LIST', payload: res.data })
+                    }
+                )
+            }
+        },
     })
 
 </script>

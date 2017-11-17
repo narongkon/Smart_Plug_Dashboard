@@ -56,7 +56,7 @@
                     <template>
                         <div>
                             <paper-icon-button icon="icons:assessment" on-click="_graph"></paper-icon-button>
-                            <paper-icon-button icon="maps:pin-drop" on-click="_map"></paper-icon-button>
+                            <!-- <paper-icon-button icon="maps:pin-drop" on-click="_map"></paper-icon-button> -->
                             <paper-icon-button icon="create" on-click="_selectData"></paper-icon-button>
                             <paper-icon-button icon="delete" on-click="_delData"></paper-icon-button>
                         </div>
@@ -120,6 +120,7 @@
             }
 
             _graph() {
+                Nylon.dispatch('GATEWAY_GET_GRAPH')
                 Nylon.$['page-gateway'].$.graph.$.pr.open()
             }
 

@@ -11,13 +11,13 @@ function mac_address_to_buffer(data) {
 }
 
 exports.A1 = (req, res) => {
-    r.table('list')
+    r.table('plug')
         .getAll(req.mac_address, { index: 'mac_address' })
         .run()
         .then((result) => {
             if (result == "") {
                 // INSERT
-                r.table('list')
+                r.table('plug')
                     .insert(req)
                     .without('mac_address')
                     .run()
@@ -27,7 +27,7 @@ exports.A1 = (req, res) => {
 
             } else {
                 // EDIT
-                r.table('list')
+                r.table('plug')
                     .getAll(req.mac_address, { index: 'mac_address' })
                     .filter({ join: 1 })
                     .update({ connect: 1 })
@@ -45,7 +45,7 @@ exports.A1 = (req, res) => {
 }
 
 exports.A5 = (req, res) => {
-    r.table('list')
+    r.table('plug')
         .getAll(req.mac_address, { index: 'mac_address' })
         .update(req)
         .without('mac_address')
@@ -56,7 +56,7 @@ exports.A5 = (req, res) => {
 }
 
 exports.A6 = (req, res) => {
-    r.table('list')
+    r.table('plug')
         .getAll(req.mac_address, { index: 'mac_address' })
         .update(req)
         .without('mac_address')
@@ -67,7 +67,7 @@ exports.A6 = (req, res) => {
 }
 
 exports.A7 = (req, res) => {
-    r.table('list')
+    r.table('plug')
         .getAll(req.mac_address, { index: 'mac_address' })
         .update(req)
         .without('mac_address')

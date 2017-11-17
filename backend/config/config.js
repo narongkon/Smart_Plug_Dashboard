@@ -9,8 +9,9 @@ var config = {
     database: {
       max: 10,
       servers: [
-        { host: 'rdb.codeunbug.com', port: 28015, user: 'admin', password: 'next@2017' }
+        // { host: 'rdb.codeunbug.com', port: 28015, user: 'admin', password: 'next@2017' }
         // {host: '192.168.10.15', port: 28015}
+        { host: '127.0.0.1', port: 28015}
       ],
       db: 'smart_plug'
     },
@@ -67,7 +68,8 @@ var config = {
     },
     database: {
       servers: [
-        { host: 'rdb.codeunbug.com', port: 28015 }
+        // { host: 'rdb.codeunbug.com', port: 28015 }
+        { host: '127.0.0.1', port: 28015 }
       ],
       db: 'oauth'
     },

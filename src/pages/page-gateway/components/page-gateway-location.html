@@ -79,7 +79,7 @@
                 let self = this
                 for (let i in e) {
                     setTimeout(function () {
-                        self.markerCreated(e[i].position);
+                        self.markerCreated(e[i].position, e[i]);
                     }, 100)
                 }
             }
@@ -88,25 +88,34 @@
                 this.gmap = e.currentTarget.map;
             }
 
-            markerCreated(position) {
+            markerCreated(position, info) {
+                var contentString = '<div id="content"><b>' + info.desciption +
+                    '</b><br/><b>Mac Address: </b> ' + info.mac_address +
+                    '</b><br/><b>Latitude: </b> ' + info.position.lat + '<br/></b><b>Longtitude: </b> ' + info.position.lng + '<br/></div>';
                 var c = { lat: parseFloat(position.lat), lng: parseFloat(position.lng) };
                 if (this.gmap) {
                     this.gmap.setCenter(c);
+
+                    var infowindow = new google.maps.InfoWindow({
+                        content: contentString,
+                        maxWidth: 200
+                    });
+
                     var marker = new google.maps.Marker({
                         position: c,
                         map: this.gmap
                     });
+
+                    marker.addListener('click', function () {
+                        infowindow.open(this.gmap, marker);
+                    });
+
                     this.push('markers', marker)
                 }
             }
 
             _closePanelRight() {
                 this.$.pr.close()
-            }
-
-            connectedCallback() {
-                super.connectedCallback()
-                console.log('CALLBANK');
             }
 
         }

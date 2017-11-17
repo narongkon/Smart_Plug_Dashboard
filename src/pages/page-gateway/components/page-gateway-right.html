@@ -54,10 +54,10 @@
                         </div>
 
                         <div class="col-xs-6 col-sm-6 col-md-3">
-                            <paper-input always-float-label label="Latitude" class="font" value="{{select.position.lat}}" required auto-validate error-message="needs some text!"></paper-input>
+                            <paper-input always-float-label label="Latitude" class="font" value="{{select.position.lat}}" required auto-validate allowed-pattern="[-+,0-9,.]" error-message="needs some number!"></paper-input>
                         </div>
                         <div class="col-xs-12 col-sm-6 col-md-3">
-                            <paper-input always-float-label label="Longitude" class="font" value="{{select.position.lng}}" required auto-validate error-message="needs some text!"></paper-input>
+                            <paper-input always-float-label label="Longitude" class="font" value="{{select.position.lng}}" required auto-validate allowed-pattern="[-+,0-9,.]" error-message="needs some number!"></paper-input>
                         </div>
 
                     </div>

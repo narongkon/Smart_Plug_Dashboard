@@ -6,7 +6,7 @@ var mac_ping = []   // mac_ping เก็บค่า Mac Address ที่ท�
 // Ping ((ฺBroadcast) [หน่วงเวลา 5 วินาที]
 setInterval(function () {
     if (flag == 0) {
-        r.table('list')
+        r.table('plug')
             .coerceTo('array')
             .run()
             .then((result) => {
@@ -43,12 +43,12 @@ setInterval(function () {
                 mac_on.push(mac_ping[index].mac_address)
             }
         }
-        r.table('list')
+        r.table('plug')
             .getAll(r.args(mac_on), { index: 'mac_address' })
             .update({ connect: 1 })
             .run()
             .then((result) => {
-                r.table('list')
+                r.table('plug')
                     .getAll(r.args(mac_off), { index: 'mac_address' })
                     .update({ connect: 0 })
                     .run()

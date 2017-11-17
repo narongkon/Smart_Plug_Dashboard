@@ -13,7 +13,7 @@
     "test": "polymer test",
     "test:integration": "polymer build # test that psk builds without error with the CLI",
     "backend": "cd backend && nylon-cli serve",
-    "polymer:dev": "polymer serve --port 8080 --hostname 0.0.0.0",
+    "polymer:dev": "polymer serve --port 8181 --hostname 0.0.0.0",
     "polymer:dist": "polymer serve build/default --port 8081",
     "dev": "npm-run-all --parallel backend polymer:dev",
     "dist": "npm-run-all --parallel backend polymer:dist",

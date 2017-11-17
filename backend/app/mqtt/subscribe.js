@@ -1,15 +1,17 @@
 var r = require('rethinkdb')
 var client = require('./config').connect()
-var db = require('./db').connect()
 var parser = require('../mqtt/parser/packet').packet
 var conDB
 
 var f = require('./parser/function')
 
 r.connect({
-    host: 'rdb.codeunbug.com',
-    port: 28015, user: "admin",
-    password: "next@2017",
+    // host: 'rdb.codeunbug.com',
+    // port: 28015, user: "admin",
+    // password: "next@2017",
+    // db: "smart_plug"
+    host: '127.0.0.1',
+    port: 28015,
     db: "smart_plug"
 }, function (err, conn) {
     if (err) throw err

@@ -2,7 +2,7 @@ var client = require('../mqtt/config').connect()
 
 exports.list = (req, res) => {
   const r = req.r;
-  var tb = r.table('list')
+  var tb = r.table('plug')
   if (req.query.hasOwnProperty('gateway')) {
     tb = tb.getAll(req.query.gateway, { index: 'mac_address_gateway' })
   } else if (req.query.hasOwnProperty('id')) {
@@ -19,7 +19,7 @@ exports.list = (req, res) => {
 
 exports.select = (req, res) => {
   const r = req.r;
-  r.table('list').get(req.params.id)
+  r.table('plug').get(req.params.id)
     .run()
     .then((result) => {
       return res.json(result);
@@ -31,7 +31,7 @@ exports.select = (req, res) => {
 
 exports.edit = (req, res) => {
   const r = req.r;
-  r.table('list')
+  r.table('plug')
     .get(req.body.id)
     .update({ location_name: req.body.location_name, status: req.body.status })
     .run()
@@ -57,7 +57,7 @@ exports.edit = (req, res) => {
 
 exports.delete = (req, res) => {
   const r = req.r;
-  r.table('list')
+  r.table('plug')
     .get(req.query.id)
     .delete()
     .run()
@@ -78,7 +78,7 @@ exports.connect = (req, res) => {
     k = k + 2
   }
 
-  r.table('list').get(req.body.id)
+  r.table('plug').get(req.body.id)
     .update({ connect: req.body.connect, join: 1 })
     .run()
     .then((result) => {
