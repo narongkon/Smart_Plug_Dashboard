@@ -4,7 +4,7 @@ exports.list = (req, res) => {
   const r = req.r;
   var tb = r.table('plug')
   if (req.query.hasOwnProperty('gateway')) {
-    tb = tb.getAll(req.query.gateway, { index: 'mac_address_gateway' })
+    tb = tb.getAll(req.query.gateway, { index: 'gateway_mac_address' })
   } else if (req.query.hasOwnProperty('id')) {
     tb = tb.get(req.query.id)
   }

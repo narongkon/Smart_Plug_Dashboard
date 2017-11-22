@@ -12,6 +12,7 @@ exports.list = (req, res) => {
             return res.status(500).send(err.message);
         })
 }
+
 exports.all = (req, res) => {
     const r = req.r;
     r.table('gateway')
@@ -22,6 +23,7 @@ exports.all = (req, res) => {
             return res.status(500).send(err.message);
         })
 }
+
 exports.insert = (req, res) => {
     const r = req.r;
     r.table('gateway')
@@ -34,6 +36,7 @@ exports.insert = (req, res) => {
             return res.status(500).send(err.message);
         })
 }
+
 exports.edit = (req, res) => {
     const r = req.r;
     r.table('gateway')
@@ -47,6 +50,7 @@ exports.edit = (req, res) => {
             return res.status(500).send(err.message);
         })
 }
+
 exports.delete = (req, res) => {
     const r = req.r;
     r.table('gateway')

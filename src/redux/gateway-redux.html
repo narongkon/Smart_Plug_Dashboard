@@ -17,6 +17,9 @@
             case 'GATEWAY_GET_LIST':
                 state.list = action.payload
                 return state
+            case 'GATEWAY_GET_GRAPH':
+                state.graph = action.payload
+                return state
             default:
                 return state
         }
@@ -120,12 +123,12 @@
                 )
             }
         },
-        GATEWAY_GET_GRAPH: function () {
+        GATEWAY_GET_GRAPH: function (id) {
             return dispatch => {
-                axios.get(`/graph/plug`).then(
+                axios.get(`/graph/gateway?gateway=${id}`).then(
                     res => {
-                        console.log('res', res.data);
-                        // dispatch({ type: 'GATEWAY_GET_LIST', payload: res.data })
+                        // console.log('res', res.data);
+                        dispatch({ type: 'GATEWAY_GET_GRAPH', payload: res.data })
                     }
                 )
             }

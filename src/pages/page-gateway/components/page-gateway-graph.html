@@ -116,11 +116,128 @@
                         value: 'sum',
                         observer: 'select_type_change'
                     },
+                    graph: {
+                        type: Array,
+                        statePath: 'gateway.graph',
+                        observer: '_graph'
+                    },
                     graph_label: {
                         type: String,
                         value: 'Loading ...'
                     }
                 }
+            }
+
+            _avr(e) {
+                var time = []
+                for (let i in e) {
+                    for (let index = 0; index < 24; index++) {
+                        var a = e[i].timestamp.split('T')[1].split('.')[0].split(':')[0];
+                        if (time[index] == undefined) {
+                            time[index] = []
+                        }
+                        if (parseInt(a) == index) {
+                            if (time[index] == undefined) {
+                                time[index] = []
+                            }
+                            time[index-1].push(e[i].electricity.power)
+                        }
+                    }
+                }
+
+                var r = 0
+                var avr = []
+                for (let v in time) {
+                    if (time[v].length == 0) {
+                        time[v] = 0;
+                    } else {
+                        for (let k in time[v]) {
+                            r = r + time[v][k]
+                        }
+                        time[v] = r / time[v].length
+                        r = 0;
+                    }
+                }
+                // console.log(time);
+                return time
+            }
+
+            _graph(e) {
+                // console.log('graph', e);
+                let now = []
+                let yesterday = []
+                let lastweek = []
+                for (let i in e) {
+                    if (e[i].now === true) {
+                        now.push(e[i])
+                    } else if (e[i].yesterday === true) {
+                        yesterday.push(e[i])
+                    } else if (e[i].lastweek === true) {
+                        lastweek.push(e[i])
+                    }
+                }
+                // console.log(this._avr(now));
+                // console.log(this._avr(yesterday));
+                // console.log(this._avr(lastweek));
+
+                var a = this._avr(now)
+                var a2 = ['A']
+                var a3 = a2.concat(a);
+
+                var c = this._avr(yesterday)
+                var c2 = ['C']
+                var c3 = c2.concat(c);
+                // console.log(a3);
+                let self = this
+                let date = new Date()
+                let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                let monthNames = ["January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December"];
+
+                setTimeout(function () {
+                    self.set('graph_label', days[date.getDay()] + ', ' + monthNames[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear() + ' (Today)')
+                    self.$.chart1.generate({
+                        data: {
+                            columns: [
+                                a3,
+                                ['B', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 500, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                                ['C', 50, 200, 300, 400, 200, 100, 200, 200, 100, 400, 600, 100, 400, 200, 100, 400, 200, 100, 100, 100, 100, 300, 100, 50],
+                                ['D', 100, 100, 200, 300, 50, 600, 300, 400, 400, 500, 300, 200, 500, 300, 200, 500, 100, 100, 200, 200, 200, 100, 100, 400]
+                            ],
+                            type: 'bar',
+                            types: {
+                                C: 'spline',
+                                D: 'spline'
+                            },
+                        },
+                        axis: {
+                            x: {
+                                tick: {
+                                    rotate: 75,
+                                    multiline: false
+                                },
+                                height: 70,
+                                label: 'Time',
+                                type: 'category',
+                                categories: ['01.00', '02.00', '03.00', '04.00', '05.00', '06.00',
+                                    '07.00', '08.00', '09.00', '10.00', '11.00', '12.00',
+                                    '13.00', '14.00', '15.00', '16.00', '17.00', '18.00',
+                                    '19.00', '20.00', '21.00', '22.00', '23.00', '00.00']
+                            },
+                            y: {
+                                label: {
+                                    text: 'Active Power (kW)',
+                                    position: 'outer-center'
+
+                                }
+                            }
+                        },
+                        color: {
+                            pattern: ['#03A9F4', '#FF9800', '#AEEA00', '#795548']
+                        }
+                    })
+                }, 100)
+
             }
 
             select_type_change(e) {
