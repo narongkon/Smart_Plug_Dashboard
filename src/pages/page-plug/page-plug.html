@@ -4,6 +4,7 @@
 
 <link rel="import" href="./components/page-plug-list.html">
 <link rel="import" href="./components/page-plug-right.html">
+<link rel="import" href="./components/page-plug-graph.html">
 
 <link rel="import" href="../../redux-mixin.html">
 <link rel="import" href="../../redux/plug-redex.html">
@@ -23,9 +24,8 @@
         <div class="container">
             <page-plug-list id="list"></page-plug-list>
             <page-plug-right id="right"></page-plug-right>
+            <page-plug-graph id="graph"></page-plug-graph>
         </div>
-
-
 
     </template>
 
@@ -41,6 +41,9 @@
                         type: Array,
                         value: []
                     },
+                    intervel: {
+                        type: Object
+                    }
 
                 }
             }
@@ -51,11 +54,11 @@
 
             nylonPagesActive() {
                 Nylon.dispatch('PLUG_SET_PARAMS', this._params)
-                // this.mqtt_connect();
                 Nylon.dispatch('PLUG_GET_DATA')
-                setInterval(function () {
+                var a = setInterval(function () {
                     Nylon.dispatch('PLUG_GET_DATA')
                 }, 3000)
+                this.set('interval', a)
             }
         }
 

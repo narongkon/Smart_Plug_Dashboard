@@ -40,12 +40,19 @@
             static get is() { return 'nylon-c3' }
             ready() {
                 super.ready()
-                console.log('NylonC3')
+                // console.log('NylonC3')
             }
             generate(obj) {
-                obj.bindto = this.$.chart
-                this.chart = c3.generate(obj)
+                if (this.chart) {
+                    this.chart.load(obj)
+                } else {
+                    obj.bindto = this.$.chart
+                    this.chart = c3.generate(obj)
+                }
+
             }
+
+
         }
 
         window.customElements.define(NylonC3.is, NylonC3);

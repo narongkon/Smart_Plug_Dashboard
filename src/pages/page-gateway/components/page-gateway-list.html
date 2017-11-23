@@ -26,6 +26,7 @@
         <nylon-panel-card id="pc1">
             <app-toolbar slot="header">
                 <div main-title>
+                    [[date_time]]
                 </div>
                 <paper-button raised class="btn font" on-click="_allLocation">
                     <iron-icon icon="maps:place"></iron-icon>&nbsp;&nbsp;Location
@@ -81,6 +82,18 @@
                         type: Object,
                         statePath: 'gateway.data'
                     },
+                    date_time: {
+                        type: String
+                    },
+                    days: {
+                        type: Array,
+                        value: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+                    },
+                    monthNames: {
+                        type: Array,
+                        value: ["January", "February", "March", "April", "May", "June",
+                            "July", "August", "September", "October", "November", "December"]
+                    }
                 }
             }
 
@@ -106,8 +119,6 @@
                 }, (confirm) => {
                     Nylon.dispatch('GATEWAY_DELETE_DATA', e.model.item.id)
                 })
-
-
             }
 
             _openPanelRight() {
@@ -127,6 +138,13 @@
             _allLocation() {
                 Nylon.dispatch('GATEWAY_GET_LIST')
                 Nylon.$['page-gateway'].$.location.$.pr.open()
+            }
+
+            connectedCallback() {
+                super.connectedCallback()
+                let self = this
+                let date = new Date()
+                self.set('date_time', self.days[date.getDay()] + ', ' + self.monthNames[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear() + ' (Today)')
             }
 
         }

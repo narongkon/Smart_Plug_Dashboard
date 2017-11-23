@@ -31,7 +31,7 @@
                 </paper-button>
             </app-toolbar>
             <vaadin-grid slot="content" sub-slot="grid" items="[[data]]">
-                <vaadin-grid-column width="50px">
+                <vaadin-grid-column width="10px">
                     <template class="header">
                         <div style="padding: 10px">#</div>
                     </template>
@@ -39,46 +39,47 @@
                         <div style="padding: 10px">[[_index(index)]]</div>
                     </template>
                 </vaadin-grid-column>
-                <vaadin-grid-column width="210px">
+                <vaadin-grid-column width="100px">
                     <template class="header">MAC Address</template>
                     <template> [[item.mac_address]] </template>
                 </vaadin-grid-column>
-                <vaadin-grid-column width="270px">
+                <vaadin-grid-column width="220px">
                     <template class="header">Location Name</template>
                     <template> [[item.location_name]] </template>
                 </vaadin-grid-column>
-                <vaadin-grid-column width="80px">
+                <vaadin-grid-column width="40px">
                     <template class="header">W</template>
                     <template> [[item.electricity.watt]] </template>
                 </vaadin-grid-column>
-                <vaadin-grid-column width="80px">
+                <vaadin-grid-column width="40px">
                     <template class="header">V</template>
                     <template> [[item.electricity.volt]] </template>
                 </vaadin-grid-column>
-                <vaadin-grid-column width="80px">
-                    <template class="header">A</template>
+                <vaadin-grid-column width="40px">
+                    <template class="header">mA</template>
                     <template> [[item.electricity.amp]] </template>
                 </vaadin-grid-column>
-                <vaadin-grid-column width="80px">
+                <vaadin-grid-column width="40px">
                     <template class="header">P</template>
                     <template> [[item.electricity.power]] </template>
                 </vaadin-grid-column>
-                <vaadin-grid-column width="80px">
+                <vaadin-grid-column width="30px">
                     <template class="header">Status</template>
                     <template>
                         <paper-toggle-button checked="[[_checked(item.status)]]" on-checked-changed="_status_click"></paper-toggle-button>
                     </template>
                 </vaadin-grid-column>
-                <vaadin-grid-column width="80px">
-                    <template class="header">Connect</template>
+                <vaadin-grid-column width="30px">
+                    <template class="header">Online</template>
                     <template>
-                        <paper-toggle-button checked="[[_checked(item.connect)]]" on-checked-changed="_connect_click"></paper-toggle-button>
+                        <paper-toggle-button id="[[item.mac_address]]" checked="[[_checked(item.connect)]]" on-checked-changed="_connect_click"></paper-toggle-button>
                     </template>
                 </vaadin-grid-column>
                 <vaadin-grid-column>
                     <template class="header">Manage</template>
                     <template>
                         <div>
+                            <paper-icon-button icon="icons:assessment" on-click="_graph"></paper-icon-button>
                             <paper-icon-button icon="create" on-click="_selectData"></paper-icon-button>
                             <paper-icon-button icon="delete" on-click="_delData"></paper-icon-button>
                         </div>
@@ -111,6 +112,7 @@
             }
 
             _backpage() {
+                clearInterval(Nylon.$['page-plug'].interval);
                 Nylon.redirect('/plug');
             }
 
@@ -136,6 +138,11 @@
                 })
             }
 
+            _graph(e) {
+                Nylon.dispatch('PLUG_GET_GRAPH', e.target.id)
+                Nylon.$['page-plug'].$.graph.$.pr.open()
+            }
+
             _openPanelRight() {
                 Nylon.$['page-plug'].$.right.$.pr.open()
             }
@@ -146,7 +153,6 @@
 
             _status_click(e) {
                 if (e.model.item) {
-                    // console.log('status_click');
                     var index = e.model.index
                     if (e.model.item.status == 1) {
                         this.set('data.' + index + '.status', 0)
@@ -155,22 +161,23 @@
                         this.set('data.' + index + '.status', 1)
                         Nylon.dispatch('PLUG_EDIT_STATUS', this.data[e.model.index])
                     }
-                    
+
                 }
             }
 
             _connect_click(e) {
-                if (e.model.item) {
-                    // console.log('connect_click');
-                    var index = e.model.index
-                    if (e.model.item.connect == 1) {
-                        this.set('data.' + index + '.connect', 0)
-                        Nylon.dispatch('PLUG_CONNECT', this.data[e.model.index])
-                    } else {
-                        this.set('data.' + index + '.connect', 1)
-                        Nylon.dispatch('PLUG_CONNECT', this.data[e.model.index])
-                    }
-                }
+                // console.log(e.model);
+                // if (e.model.item) {
+                //     // console.log('connect_click');
+                //     var index = e.model.index
+                //     if (e.model.item.connect == 1) {
+                //         this.set('data.' + index + '.connect', 0)
+                //         Nylon.dispatch('PLUG_CONNECT', this.data[e.model.index])
+                //     } else {
+                //         this.set('data.' + index + '.connect', 1)
+                //         Nylon.dispatch('PLUG_CONNECT', this.data[e.model.index])
+                //     }
+                // }
             }
 
 

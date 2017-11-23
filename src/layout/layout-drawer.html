@@ -14,7 +14,7 @@
 <dom-module id="layout-drawer">
     <template>
         <style include="shared-styles">
-             :host {
+            :host {
                 display: block;
                 z-index: 1;
             }
@@ -40,7 +40,7 @@
                 z-index: 1
             }
 
-            iron-selector > paper-icon-item {
+            iron-selector>paper-icon-item {
                 cursor: pointer;
             }
         </style>
@@ -52,13 +52,17 @@
                     <iron-icon icon="bookmark-border" slot="item-icon"></iron-icon>
                     View One
                 </paper-icon-item> -->
-                <paper-icon-item  name="page-view2" href="/plug" on-click="_redirect" class="font">
+                <paper-icon-item name="page-view2" href="/plug" on-click="_redirect" class="font">
                     <iron-icon src="https://icon-icons.com/icons2/586/PNG/512/plug-wire_icon-icons.com_55283.png" slot="item-icon"></iron-icon>
                     Smart Plug
                 </paper-icon-item>
-                <paper-icon-item  name="page-view2" href="/charger" on-click="_redirect" class="font">
+                <paper-icon-item name="page-view2" href="/charger" on-click="_redirect" class="font">
                     <iron-icon src="https://d30y9cdsu7xlg0.cloudfront.net/png/2061-200.png" slot="item-icon"></iron-icon>
                     Smart Charger
+                </paper-icon-item>
+                <paper-icon-item name="page-view2" href="/login" on-click="singout" class="font">
+                    <iron-icon src="https://cdn1.iconfinder.com/data/icons/interface-elements-ii-1/512/Logout-512.png" slot="item-icon"></iron-icon>
+                    Sing Out
                 </paper-icon-item>
             </iron-selector>
         </app-drawer>
@@ -87,11 +91,15 @@
                 this.$.drawer.toggle();
             }
 
-            _redirect(e){
+            _redirect(e) {
                 Nylon.redirect(e.currentTarget.getAttribute('href'))
-                setTimeout(()=>{
+                setTimeout(() => {
                     this.$.drawer.close()
-                },500)
+                }, 500)
+            }
+
+            singout() {
+                Nylon.$['page-login']._singout_google()
             }
 
         }

@@ -38,11 +38,16 @@
             <nylon-panel-card id="pc2" slot="content">
                 <div slot="content">
                     <div class="row">
-                        <div class="col-xs-6 col-sm-6 col-md-3">
+                        <div class="col-xs-6 col-sm-6 col-md-5">
                             <paper-input always-float-label label="Mac Address" class="font" value="{{select.mac_address}}" char-counter maxlength="13"
                                 required auto-validate error-message="needs some text!"></paper-input>
                         </div>
-                        <div class="col-xs-12 col-sm-6 col-md-3">
+                        <div class="col-xs-12 col-sm-6 col-md-5">
+                            <paper-input always-float-label label="Name" class="font" value="{{select.name}}" required auto-validate error-message="needs some text!"></paper-input>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-6 col-md-10">
                             <paper-input always-float-label label="Desciption" class="font" value="{{select.desciption}}" required auto-validate error-message="needs some text!"></paper-input>
                         </div>
                     </div>
@@ -52,14 +57,14 @@
                                 <iron-icon icon="maps:pin-drop"></iron-icon>
                             </paper-button>
                         </div>
-
-                        <div class="col-xs-6 col-sm-6 col-md-3">
-                            <paper-input always-float-label label="Latitude" class="font" value="{{select.position.lat}}" required auto-validate allowed-pattern="[-+,0-9,.]" error-message="needs some number!"></paper-input>
+                        <div class="col-xs-6 col-sm-6 col-md-4">
+                            <paper-input always-float-label label="Latitude" class="font" value="{{select.position.lat}}" required auto-validate allowed-pattern="[-+,0-9,.]"
+                                error-message="needs some number!"></paper-input>
                         </div>
-                        <div class="col-xs-12 col-sm-6 col-md-3">
-                            <paper-input always-float-label label="Longitude" class="font" value="{{select.position.lng}}" required auto-validate allowed-pattern="[-+,0-9,.]" error-message="needs some number!"></paper-input>
+                        <div class="col-xs-12 col-sm-6 col-md-4">
+                            <paper-input always-float-label label="Longitude" class="font" value="{{select.position.lng}}" required auto-validate allowed-pattern="[-+,0-9,.]"
+                                error-message="needs some number!"></paper-input>
                         </div>
-
                     </div>
                 </div>
                 <app-toolbar slot="footer">
@@ -73,8 +78,6 @@
                 </app-toolbar>
             </nylon-panel-card>
         </nylon-panel-right>
-
-
 
         <paper-dialog id="modal" modal>
             <div class="row end-md">

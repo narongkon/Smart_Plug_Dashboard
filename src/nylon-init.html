@@ -18,8 +18,8 @@
     </style>
 
     <nylon-dialog></nylon-dialog>
-    <layout-main id="layoutMain">
-      <nylon-pages id="nylonPage">
+    <layout-main id="layoutMain" full_screen="{{full_screen}}">
+      <nylon-pages id="nylonPage" on_path="{{path}}">
         <!-- <page-view path="/"></page-view> -->
         <page-plug path="/plug/:id"></page-plug>
         <page-gateway path="/plug"></page-gateway>
@@ -37,7 +37,38 @@
       static get is() { return 'nylon-init' }
       static get properties() {
         return {
+          path: {
+            type: Object,
+            observer: 'path_change'
+          },
+          login: {
+            type: Boolean,
+            value: true
+          },
+          next_path: {
+            type: String,
+            value: 'Next Page'
+          },
+          full_screen: {
+            type: Boolean
+          }
+        }
+      }
 
+      ready() {
+        super.ready()
+      }
+
+      path_change(e) {
+        // console.log(e);
+        if (e == '/login') {
+          this.set('full_screen', true)
+        } else {
+          if (this.login == false) {
+            window.location.href = 'login'
+          } else {
+            this.set('full_screen', false)
+          }
         }
       }
 

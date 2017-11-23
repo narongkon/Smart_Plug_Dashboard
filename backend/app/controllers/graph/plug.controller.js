@@ -25,7 +25,7 @@ exports.list = (req, res) => {
     var lastweek = new Date(new Date().getTime() - (7 * 24 * 60 * 60 * 1000)).toLocaleString('en-US', { timeZone: 'Asia/Bangkok', hour12: false }).toString()
 
     r.table('plug_logger')
-        .getAll(req.query.gateway, { index: 'gateway_id' })
+        .getAll(req.query.plug, { index: 'plug_id' })
         .filter(r.row('timestamp').date().eq(r.ISO8601(format(date)).date())
             .or(r.row('timestamp').date().eq(r.ISO8601(format(yesterday)).date())
                 .or(r.row('timestamp').date().eq(r.ISO8601(format(lastweek)).date())))
@@ -44,29 +44,5 @@ exports.list = (req, res) => {
         .catch((err) => {
             return res.status(500).send(err.message);
         })
-
-
-    // .filter(r.row('timestamp').during(r.ISO8601(format(lastweek)), r.ISO8601(format(date))))
-    // .merge(function (m) {
-    //     var a = m('timestamp').toISO8601().split('T').bracket(0);
-    //     var b = m('timestamp').toISO8601().split('T').bracket(1).split('+').bracket(0).split('.').bracket(0);
-    //     var c = { date: a, time: b };
-    //     return {
-    //         new_timestamp: c
-    //     }
-    // })
-
-
-    //     .merge(
-    //     function (m) {
-    //         return {
-    //             t: m('timestamp').date().eq(r.now().),
-    //             now: m('timestamp').date().eq(r.now().date()),
-    //             last: m('timestamp').date().eq(r.ISO8601('2017-11-14T01:01:01+07:00').date()),
-
-    //         }
-    //     }
-    //     ).pluck('now', 'last', 't')
-
 
 }

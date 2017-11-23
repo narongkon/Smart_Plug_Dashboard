@@ -17,6 +17,9 @@
             case 'PLUG_CLEAR_SELECT':
                 state.select = {}
                 return state
+            case 'PLUG_GET_GRAPH':
+                state.graph = action.payload
+                return state
             default:
                 return state
         }
@@ -120,6 +123,15 @@
                         Nylon.toast({
                             msg: 'แก้ไขเสร็จสิ้น'
                         })
+                    }
+                )
+            }
+        },
+        PLUG_GET_GRAPH: function (id) {
+            return dispatch => {
+                axios.get(`/graph/plug?plug=${id}`).then(
+                    res => {
+                        dispatch({ type: 'PLUG_GET_GRAPH', payload: res.data })
                     }
                 )
             }

@@ -1,16 +1,5 @@
 <link rel="import" href="../../../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../../../bower_components/polymer/lib/elements/dom-repeat.html">
 
-<link rel="import" href="../../components/nylon-panel-card/nylon-panel-card.html">
-<link rel="import" href="../../../bower_components/app-layout/app-toolbar/app-toolbar.html">
-<link rel="import" href="../../../bower_components/vaadin-grid/vaadin-grid.html">
-<link rel="import" href="../../../bower_components/vaadin-grid/vaadin-grid-column.html">
-<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../../bower_components/iron-icons/maps-icons.html">
-<link rel="import" href="../../../bower_components/iron-icon/iron-icon.html">
-<link rel="import" href="../../../bower_components/paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="../../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../../bower_components/polymerfire/firebase-app.html">
 <link rel="import" href="../../../bower_components/polymerfire/firebase-auth.html">
@@ -78,7 +67,8 @@
                 letter-spacing: 1px;
                 background: transparent;
                 border: 0;
-                border-bottom: 2px solid #3160B6;
+                border-bottom: 2px;
+                /* border-bottom: 2px solid #3160B6; */
                 cursor: pointer;
                 transition: all 0.15s ease;
             }
@@ -89,7 +79,6 @@
 
 
             /* Button modifiers */
-
             .buttonBlue {
                 background: #4a89dc;
                 text-shadow: 1px 1px 0 rgba(39, 110, 204, .5);
@@ -115,19 +104,25 @@
                 }
             }
         </style>
-        <!-- <hgroup>
-            <h1 class="font">Smart City 4.0</h1>
-            <h3 class="font">By Next-Corp Unlimited</h3>
-        </hgroup>
+        <!-- <hgroup> -->
+        <!-- <h1 class="font">Smart City 4.0</h1> -->
+        <!-- <h3 class="font">By Next-Corp Unlimited</h3> -->
+        <!-- </hgroup> -->
         <form>
+            <button type="button" style="background-color: #395697" class="button font">
+                <img src="https://www.facebook.com/images/fb_icon_325x325.png" alt="" width="20px">&nbsp&nbsp Login with Facebook
+            </button>
+            <button type="button" style="background-color: #FFFFFF; color:#636363;" class="button font" on-click="_singin_google">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png"
+                    alt="" width="20px">&nbsp Sign up using Google
+            </button>
             <paper-input label="Username" class="font" value="{{select.mac_address}}" required="true"></paper-input>
             <paper-input style="margin-bottom: 20px;" label="Password" class="font" value="{{select.mac_address}}" required="true"></paper-input>
             <button type="button" class="button buttonBlue font">Sign In</button>
-        </form> -->
-
+        </form>
         <firebase-app auth-domain="polymerfire-test.firebaseapp.com" database-url="https://polymerfire-test.firebaseio.com/" api-key="AIzaSyDTP-eiQezleFsV2WddFBAhF_WEzx_8v_g">
         </firebase-app>
-        <firebase-auth id="auth" user="{{user}}" provider="google" on-error="handleError">
+        <firebase-auth id="auth" user="{{user}}" status-Known="{{statusKnown}}" provider="google" on-error="handleError">
         </firebase-auth>
 
     </template>
@@ -143,17 +138,32 @@
                     },
                     user: {
                         type: Object,
-                        observer: '_user'
+                        observer: 'xxx'
+                    },
+                    statusKnown: {
+                        type: Object
                     }
 
                 }
             }
 
-            _user(e) {
+            xxx(e) {
                 console.log(e);
             }
 
+            _singin_google() {
+                this.$.auth.signInWithPopup()
+                    .then(function (response) {
+                        // optionally handle a successful login
+                    })
+                    .catch(function (error) {
+                        // unsuccessful authentication response here 
+                    });
+            }
 
+            _singout_google() {
+                this.$.auth.signOut()
+            }
 
         }
         window.customElements.define(PageLogin.is, PageLogin);

@@ -15,7 +15,7 @@
 <link rel="import" href="../../../redux-mixin.html">
 <link rel="import" href="../../../layout/shared-styles.html">
 
-<dom-module id="page-gateway-graph">
+<dom-module id="page-plug-graph">
     <template>
         <style include="shared-styles">
             :host {
@@ -32,19 +32,11 @@
 
             <nylon-panel-card id="pc2" slot="content">
                 <div slot="content">
-                    <div class="row">
-                        <!-- <div style="margin-left: 3%;" class="col-md-3">
-                            <vaadin-combo-box always-float-label id="demo1-1" label="Graph" slot="content" items="[[type]]" item-label-path="name" placeholder="Select Graph"
-                                value="{{select_type}}">
-                                <template>
-                                    [[item.name]]
-                                </template>
-                            </vaadin-combo-box>
-                        </div> -->
-                        <!-- <paper-button raised on-click="select_type_change" class="font" id="sum">SUMMARY</paper-button> -->
-                        <!-- <paper-button raised on-click="select_type_change" class="font" id="15m">15 MINNUTE</paper-button> -->
-                        <!-- <paper-button raised on-click="select_type_change" class="font" id="1h">1 HOUR</paper-button> -->
-                    </div>
+                    <!-- <div class="row"> -->
+                    <!-- <paper-button raised on-click="select_type_change" class="font" id="sum">SUMMARY</paper-button> -->
+                    <!-- <paper-button raised on-click="select_type_change" class="font" id="15m">15 MINNUTE</paper-button> -->
+                    <!-- <paper-button raised on-click="select_type_change" class="font" id="1h">1 HOUR</paper-button> -->
+                    <!-- </div> -->
                     <div class="row">
                         <div class="col-md-12">
                             <h3 style="text-align: center; color:#03A9F4;">
@@ -53,41 +45,6 @@
                             <nylon-c3 slot="content" id="chart1"></nylon-c3>
                         </div>
                     </div>
-
-                    <!-- <iron-pages selected="{{select_type}}" attr-for-selected="name">
-                        <div name="sum">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <h3 style="text-align: center; color:#03A9F4;">
-                                        [[graph_label]]
-                                    </h3>
-                                    <nylon-c3 slot="content" id="chart1"></nylon-c3>
-                                </div>
-                            </div>
-                        </div>
-                        <div name="15m">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <h3 style="text-align: center; color:#03A9F4;">[[graph_label]]</h3>
-                                    <nylon-c3 slot="content" id="chart2"></nylon-c3>
-                                </div>
-                            </div>
-                        </div>
-                        <div name="1h">Three</div>
-                    </iron-pages> -->
-
-                    <!-- <div class="col-md-6">
-                            <h3 style="text-align: center; color:#03A9F4;">Ampere (A)</h3>
-                            <nylon-c3 slot="content" id="chart2"></nylon-c3>
-                        </div>
-                        <div class="col-md-6">
-                            <h3 style="text-align: center; color:#03A9F4;">Volt (V)</h3>
-                            <nylon-c3 slot="content" id="chart3"></nylon-c3>
-                        </div>
-                        <div class="col-md-6">
-                            <h3 style="text-align: center; color:#03A9F4;">Power (P)</h3>
-                            <nylon-c3 slot="content" id="chart4"></nylon-c3>
-                        </div> -->
                 </div>
 
             </nylon-panel-card>
@@ -95,8 +52,8 @@
     </template>
 
     <script>
-        class PageGatewayGraph extends ReduxMixin(Polymer.Element) {
-            static get is() { return 'page-gateway-graph'; }
+        class PagePlugGraph extends ReduxMixin(Polymer.Element) {
+            static get is() { return 'page-plug-graph'; }
             static get properties() {
                 return {
                     select: {
@@ -117,7 +74,7 @@
                     },
                     graph: {
                         type: Array,
-                        statePath: 'gateway.graph',
+                        statePath: 'plug.graph',
                         observer: '_graph'
                     },
                     graph_label: {
@@ -168,7 +125,6 @@
                         r = 0;
                     }
                 }
-                // console.log(time);
                 return time
             }
 
@@ -196,7 +152,7 @@
 
                 var d = this._avr(lastweek)
                 var d2 = ['D']
-                var d3 = d2.concat(d);
+                var d3 = c2.concat(d);
 
                 let self = this
                 let date = new Date()
@@ -207,6 +163,7 @@
                         data: {
                             columns: [
                                 a3,
+
                                 c3,
                                 d3
                             ],
@@ -242,12 +199,9 @@
                             pattern: ['#03A9F4', '#FF9800', '#AEEA00', '#795548']
                         }
                     })
+
                 }, 100)
 
-            }
-
-            connectedCallback() {
-                super.connectedCallback()
             }
 
             _closePanelRight() {
@@ -255,6 +209,6 @@
             }
 
         }
-        window.customElements.define(PageGatewayGraph.is, PageGatewayGraph);
+        window.customElements.define(PagePlugGraph.is, PagePlugGraph);
     </script>
 </dom-module>
