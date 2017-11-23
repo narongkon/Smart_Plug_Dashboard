@@ -64,6 +64,7 @@
                     <iron-icon src="https://cdn1.iconfinder.com/data/icons/interface-elements-ii-1/512/Logout-512.png" slot="item-icon"></iron-icon>
                     Sing Out
                 </paper-icon-item>
+
             </iron-selector>
         </app-drawer>
 
@@ -98,8 +99,26 @@
                 }, 500)
             }
 
+            deleteAllCookies() {
+                var cookies = document.cookie.split(";");
+
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i];
+                    var eqPos = cookie.indexOf("=");
+                    var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+                    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                }
+            }
+
             singout() {
-                Nylon.$['page-login']._singout_google()
+                this.deleteAllCookies()
+                // console.log(document.cookie);
+                localStorage.clear();
+                sessionStorage.clear();
+                Nylon.redirect('login')
+                setTimeout(() => {
+                    this.$.drawer.close()
+                }, 100)
             }
 
         }

@@ -43,7 +43,7 @@
           },
           login: {
             type: Boolean,
-            value: true
+            value: false
           },
           next_path: {
             type: String,
@@ -51,7 +51,7 @@
           },
           full_screen: {
             type: Boolean
-          }
+          },
         }
       }
 
@@ -63,9 +63,17 @@
         // console.log(e);
         if (e == '/login') {
           this.set('full_screen', true)
+          // console.log(localStorage.getItem('login'));
+          if (localStorage.getItem('login') == null) {
+            console.log('not login');
+          } else {
+            location.href = '/'
+          }
+
         } else {
-          if (this.login == false) {
-            window.location.href = 'login'
+          if (localStorage.getItem('login') == null) {
+            sessionStorage.setItem('next_page', e);
+            location.href = 'login'
           } else {
             this.set('full_screen', false)
           }

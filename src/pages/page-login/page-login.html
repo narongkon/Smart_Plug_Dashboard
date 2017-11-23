@@ -1,10 +1,9 @@
 <link rel="import" href="../../../bower_components/polymer/polymer-element.html">
 
 <link rel="import" href="../../../bower_components/paper-input/paper-input.html">
-<link rel="import" href="../../../bower_components/polymerfire/firebase-app.html">
-<link rel="import" href="../../../bower_components/polymerfire/firebase-auth.html">
 
 <link rel="import" href="../../redux-mixin.html">
+<link rel="import" href="../../redux/login-redux.html">
 <link rel="import" href="../../layout/shared-styles.html">
 
 <dom-module id="page-login">
@@ -79,6 +78,7 @@
 
 
             /* Button modifiers */
+
             .buttonBlue {
                 background: #4a89dc;
                 text-shadow: 1px 1px 0 rgba(39, 110, 204, .5);
@@ -109,21 +109,18 @@
         <!-- <h3 class="font">By Next-Corp Unlimited</h3> -->
         <!-- </hgroup> -->
         <form>
-            <button type="button" style="background-color: #395697" class="button font">
+            <button type="button" style="background-color: #395697" class="button font" on-click="_login_facebook">
                 <img src="https://www.facebook.com/images/fb_icon_325x325.png" alt="" width="20px">&nbsp&nbsp Login with Facebook
             </button>
             <button type="button" style="background-color: #FFFFFF; color:#636363;" class="button font" on-click="_singin_google">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png"
                     alt="" width="20px">&nbsp Sign up using Google
             </button>
-            <paper-input label="Username" class="font" value="{{select.mac_address}}" required="true"></paper-input>
-            <paper-input style="margin-bottom: 20px;" label="Password" class="font" value="{{select.mac_address}}" required="true"></paper-input>
-            <button type="button" class="button buttonBlue font">Sign In</button>
+            <paper-input label="Username" class="font" value="{{data.user}}" required="true"></paper-input>
+            <paper-input type="password" style="margin-bottom: 20px;" label="Password" class="font" value="{{data.password}}" required="true"></paper-input>
+            <button type="button" class="button buttonBlue font" on-click="_singin_enter">Sign In</button>
         </form>
-        <firebase-app auth-domain="polymerfire-test.firebaseapp.com" database-url="https://polymerfire-test.firebaseio.com/" api-key="AIzaSyDTP-eiQezleFsV2WddFBAhF_WEzx_8v_g">
-        </firebase-app>
-        <firebase-auth id="auth" user="{{user}}" status-Known="{{statusKnown}}" provider="google" on-error="handleError">
-        </firebase-auth>
+        <button on-click="_singout_google">Clear</button>
 
     </template>
 
@@ -136,33 +133,61 @@
                         type: Object,
                         statePath: 'i18n.pageMyView'
                     },
+                    data: {
+                        type: Object,
+                        statePath: 'login.data'
+                    },
                     user: {
                         type: Object,
-                        observer: 'xxx'
+                        observer: '_user_change'
                     },
                     statusKnown: {
                         type: Object
+                    },
+                    check: {
+                        type: Object,
+                        statePath: 'login.check',
+                        observer: '_check_change'
                     }
-
                 }
             }
 
-            xxx(e) {
-                console.log(e);
+            ready(){
+                super.ready()
+            }
+
+            _user_change(e) {
+                console.log('XXXXXXXXX');
+                if (e != null) {
+                    console.log(e);
+                    console.log(e.G);
+                    localStorage.setItem('g_uuid', e.G)
+                    localStorage.setItem('login', true)
+                    Nylon.redirect('/plug')
+                }
+            }
+
+            _check_change(e) {
+                if (e.type === 1) {
+                    localStorage.setItem('login', true)
+                    Nylon.redirect('/plug')
+                }
+            }
+
+            _singin_enter() {
+                Nylon.dispatch('LOGIN_CHECK_USER', this.data)
+            }
+
+            _login_facebook() {
+                Nylon.firebase.loginWithFacebook()
             }
 
             _singin_google() {
-                this.$.auth.signInWithPopup()
-                    .then(function (response) {
-                        // optionally handle a successful login
-                    })
-                    .catch(function (error) {
-                        // unsuccessful authentication response here 
-                    });
+                Nylon.firebase.loginWithGoogle()
             }
 
             _singout_google() {
-                this.$.auth.signOut()
+                Nylon.firebase.logout()
             }
 
         }

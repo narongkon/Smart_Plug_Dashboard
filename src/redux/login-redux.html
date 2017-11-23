@@ -1,0 +1,41 @@
+<script>
+    Nylon.addReducer('login', function (state, action) {
+        state = state || {
+            data: {}
+        }
+        switch (action.type) {
+            case 'LOGIN_CLEAR_DATA':
+                state.data = action.payload
+                return state
+            case 'LOGIN_CHECK_USER':
+                state.check = action.payload
+                return state
+            default:
+                return state
+        }
+        return state
+    })
+
+
+    Nylon.addAction({
+        LOGIN_CHECK_USER: function (data) {
+            return dispatch => {
+                axios.get(`/login/check?user=${data.user}&&password=${data.password}`)
+                    .then(res => {
+                        var payload = {}
+                        if (res.data != '') {
+                            payload = {
+                                data: res.data[0],
+                                type: 1
+                            }
+                            dispatch({ type: 'LOGIN_CLEAR_DATA', payload: {} })
+                        } else {
+                            payload = { type: 0 }
+                        }
+                        dispatch({ type: 'LOGIN_CHECK_USER', payload: payload })
+                    })
+            }
+        },
+    })
+
+</script>

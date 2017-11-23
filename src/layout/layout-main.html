@@ -97,15 +97,15 @@
 
             ready() {
                 super.ready()
-                this.$.layoutHeader.style.display = 'none'
+                this.$.layoutHeader.style.visibility = 'hidden'
             }
 
             full_screen_change(e) {
                 // console.log(e);
                 if (e == true) {
-                    this.$.layoutHeader.style.display = 'none'
+                    this.$.layoutHeader.style.visibility = 'hidden'
                 } else {
-                    this.$.layoutHeader.style.display = ''
+                    this.$.layoutHeader.style.visibility = 'visible'
                 }
 
             }
