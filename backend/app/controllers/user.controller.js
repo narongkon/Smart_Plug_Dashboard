@@ -1,7 +1,7 @@
-exports.check = (req, res) => {
+exports.insert = (req, res) => {
     const r = req.r;
     r.table('user')
-        .getAll([req.query.user, r.uuid(req.query.password)], { index: 'userAndPassword' })
+        .insert(req.body)
         .run()
         .then((result) => {
             return res.json(result);
@@ -11,10 +11,11 @@ exports.check = (req, res) => {
         })
 }
 
-exports.provider = (req, res) => {
+exports.edit = (req, res) => {
     const r = req.r;
     r.table('user')
-        .getAll([req.body.uid, req.body.providerData[0].providerId], { index: 'uidAndProvider' })
+        .get(req.query.id)
+        .update(req.body)
         .run()
         .then((result) => {
             return res.json(result);

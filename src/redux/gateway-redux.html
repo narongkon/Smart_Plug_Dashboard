@@ -32,7 +32,7 @@
         GATEWAY_CLEAR_SELECT: function () {
             return dispatch => {
                 dispatch({
-                    type: 'GATEWAY_SELECT_DATA', payload: {
+                    type: `GATEWAY_SELECT_DATA`, payload: {
                         position: {
                             lat: undefined,
                             lng: undefined
@@ -41,10 +41,10 @@
                 })
             }
         },
-        GATEWAY_GET_DATA: function () {
+        GATEWAY_GET_DATA: function (id) {
             var progress = Nylon.$['page-gateway'].$.list.$.pc1.progress({ position: 'top' })
             return dispatch => {
-                axios.get('/gateway').then(
+                axios.get(`/gateway?id=${id}`).then(
                     res => {
                         progress(() => {
                             dispatch({ type: 'GATEWAY_GET_DATA', payload: res.data })
@@ -65,7 +65,7 @@
         GATEWAY_INSERT_DATA: function (select) {
             return dispatch => {
                 var progress = Nylon.$['page-gateway'].$.right.$.pc2.progress()
-                axios.post('/gateway', select).then(
+                axios.post(`/gateway`, select).then(
                     res => {
                         Nylon.dispatch('GATEWAY_GET_DATA')
                         progress(_ => {

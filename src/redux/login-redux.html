@@ -10,6 +10,8 @@
             case 'LOGIN_CHECK_USER':
                 state.check = action.payload
                 return state
+            case 'LOGIN_SET_USER':
+                state.user = action.payload
             default:
                 return state
         }
@@ -22,17 +24,68 @@
             return dispatch => {
                 axios.get(`/login/check?user=${data.user}&&password=${data.password}`)
                     .then(res => {
-                        var payload = {}
+                        // var payload = {}
                         if (res.data != '') {
-                            payload = {
-                                data: res.data[0],
-                                type: 1
-                            }
                             dispatch({ type: 'LOGIN_CLEAR_DATA', payload: {} })
+                            localStorage.setItem('SMART_CITY_LOGIN', true)
+                            localStorage.setItem('SMART_CITY_USER_ID', res.data[0].id)
+                            localStorage.setItem('SMART_CITY_USER_DATA', JSON.stringify(res.data[0]))
+                            var event = new CustomEvent("set_header", { bubbles: true });
+                            document.dispatchEvent(event);
+                            Nylon.redirect('/plug')
+
                         } else {
-                            payload = { type: 0 }
+                            // payload = { type: 0 }
                         }
-                        dispatch({ type: 'LOGIN_CHECK_USER', payload: payload })
+                        // dispatch({ type: 'LOGIN_CHECK_USER', payload: payload })
+                    })
+            }
+        },
+        LOGIN_SET_USER: function (data) {
+            return dispatch => {
+                dispatch({ type: 'LOGIN_SET_USER', payload: data })
+            }
+        },
+        LOGIN_CHECK_UID: function (data) {
+            return dispatch => {
+                let name = data.displayName.split(" ");
+                let user = {
+                    uid: data.uid,
+                    email: data.email,
+                    profile: {
+                        first_name: name[0],
+                        last_name: name[1],
+                        photo_url: data.photoURL
+                    },
+                    provider: data.providerData[0].providerId
+                }
+                let user_id = "";
+                axios.post(`/login/povider`, data)
+                    .then(res => {
+                        if (res.data == "") {
+                            axios.post(`/user`, user)
+                                .then(res => {
+                                    user_id = res.data.generated_keys[0]
+                                    localStorage.setItem('SMART_CITY_LOGIN', true)
+                                    localStorage.setItem('SMART_CITY_USER_ID', user_id);
+                                    localStorage.setItem('SMART_CITY_USER_DATA', JSON.stringify(user));
+                                    var event = new CustomEvent("set_header", { bubbles: true });
+                                    document.dispatchEvent(event);
+                                    Nylon.redirect('/plug')
+                                    
+                                })
+                        } else {
+                            user_id = res.data[0].id
+                            axios.put(`/user?id=${res.data[0].id}`, user)
+                                .then(res => {
+                                    localStorage.setItem('SMART_CITY_LOGIN', true)
+                                    localStorage.setItem('SMART_CITY_USER_ID', user_id);
+                                    localStorage.setItem('SMART_CITY_USER_DATA', JSON.stringify(user));
+                                    var event = new CustomEvent("set_header", { bubbles: true });
+                                    document.dispatchEvent(event);
+                                    Nylon.redirect('/plug')
+                                })
+                        }
                     })
             }
         },

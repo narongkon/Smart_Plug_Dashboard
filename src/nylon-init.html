@@ -64,14 +64,14 @@
         if (e == '/login') {
           this.set('full_screen', true)
           // console.log(localStorage.getItem('login'));
-          if (localStorage.getItem('login') == null) {
-            console.log('not login');
+          if (localStorage.getItem('SMART_CITY_LOGIN') == null) {
+            // console.log('not login');
           } else {
             location.href = '/'
           }
 
         } else {
-          if (localStorage.getItem('login') == null) {
+          if (localStorage.getItem('SMART_CITY_LOGIN') == null) {
             sessionStorage.setItem('next_page', e);
             location.href = 'login'
           } else {

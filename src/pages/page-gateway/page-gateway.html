@@ -50,7 +50,7 @@
             }
 
             nylonPagesActive() {
-                Nylon.dispatch('GATEWAY_GET_DATA')
+                Nylon.dispatch('GATEWAY_GET_DATA', localStorage.getItem('SMART_CITY_USER_ID'))
             }
 
         }

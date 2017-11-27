@@ -7,6 +7,8 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="../my-icons.html">
 
 <link rel="import" href="./layout-drawer.html">
@@ -17,9 +19,6 @@
     <template>
         <style include="shared-styles">
             :host {
-                --app-primary-color: #0288D1;
-                --app-secondary-color: black;
-
                 display: block;
             }
 
@@ -51,25 +50,21 @@
             }
         </style>
 
-
-
         <layout-drawer id="layoutDrawer"></layout-drawer>
-
         <app-header slot="header" fixed condenses effects="waterfall" id="layoutHeader">
             <app-toolbar class="header">
                 <paper-icon-button icon="my-icons:menu" drawer-toggle on-click="toogleMenu"></paper-icon-button>
                 <div main-title class="font">[[i18n.common.myApp]]</div>
                 <paper-button class="font" toggles on-click="changeLanguage">[[i18n.language]]</paper-button>
+                <img on-click="_img_click" class="img-circle" style="border-radius: 50%; width:35px; height:35px;" src="[[user.profile.photo_url]]">
             </app-toolbar>
             <template is="dom-if" if="[[progressEnable]]">
                 <paper-progress id="progress" value="[[progressValue]]" indeterminate="[[progressIndeterminate]]"></paper-progress>
             </template>
         </app-header>
-
         <br>
         <br>
         <slot></slot>
-
 
     </template>
 
@@ -90,6 +85,10 @@
                     full_screen: {
                         type: Boolean,
                         observer: 'full_screen_change'
+                    },
+                    user: {
+                        type: Object,
+                        value: {}
                     }
 
                 };
@@ -98,16 +97,35 @@
             ready() {
                 super.ready()
                 this.$.layoutHeader.style.visibility = 'hidden'
+                this.set_header()
+            }
+
+            set_header() {
+                var self = this
+                document.addEventListener('set_header', function (e) {
+                    self.set_header_data()
+                });
+                if (localStorage.getItem('SMART_CITY_USER_ID') != null) {
+                    self.set_header_data()
+                } else {
+                    // self.set_header_data()
+                }
+            }
+
+            set_header_data() {
+                this.set('user', Nylon.firebase.getUserData())
+            }
+
+            _img_click(e) {
+                Nylon.singoutdialog()
             }
 
             full_screen_change(e) {
-                // console.log(e);
                 if (e == true) {
                     this.$.layoutHeader.style.visibility = 'hidden'
                 } else {
                     this.$.layoutHeader.style.visibility = 'visible'
                 }
-
             }
 
             changeLanguage() {
@@ -137,8 +155,6 @@
 
                     return this.progressClose.bind(this)
                 }
-
-
             }
 
             progressClose(callback) {

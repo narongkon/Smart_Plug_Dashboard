@@ -11,6 +11,7 @@
         <style include="shared-styles">
             :host {
                 display: block;
+                overflow-x: hidden;
             }
 
             * {
@@ -76,7 +77,6 @@
                 outline: 0;
             }
 
-
             /* Button modifiers */
 
             .buttonBlue {
@@ -139,6 +139,7 @@
                     },
                     user: {
                         type: Object,
+                        statePath: 'login.user',
                         observer: '_user_change'
                     },
                     statusKnown: {
@@ -152,26 +153,16 @@
                 }
             }
 
-            ready(){
+            ready() {
                 super.ready()
             }
 
             _user_change(e) {
-                console.log('XXXXXXXXX');
-                if (e != null) {
-                    console.log(e);
-                    console.log(e.G);
-                    localStorage.setItem('g_uuid', e.G)
-                    localStorage.setItem('login', true)
-                    Nylon.redirect('/plug')
-                }
+                Nylon.dispatch('LOGIN_CHECK_UID', Nylon.firebase.getLocalStorage())
             }
 
             _check_change(e) {
-                if (e.type === 1) {
-                    localStorage.setItem('login', true)
-                    Nylon.redirect('/plug')
-                }
+                
             }
 
             _singin_enter() {
