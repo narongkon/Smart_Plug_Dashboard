@@ -44,7 +44,7 @@
         GATEWAY_GET_DATA: function (id) {
             var progress = Nylon.$['page-gateway'].$.list.$.pc1.progress({ position: 'top' })
             return dispatch => {
-                axios.get(`/gateway?id=${id}`).then(
+                axios.get(`/gateway?user_id=${id}`).then(
                     res => {
                         progress(() => {
                             dispatch({ type: 'GATEWAY_GET_DATA', payload: res.data })
@@ -67,13 +67,13 @@
                 var progress = Nylon.$['page-gateway'].$.right.$.pc2.progress()
                 axios.post(`/gateway`, select).then(
                     res => {
-                        Nylon.dispatch('GATEWAY_GET_DATA')
+                        Nylon.dispatch('GATEWAY_GET_DATA', localStorage.getItem('SMART_CITY_USER_ID'))
                         progress(_ => {
                             Nylon.$['page-gateway'].$.right.$.pr.close()
                             Nylon.store.dispatch({ type: 'GATEWAY_CLEAR_SELECT' })
                             axios.get('/mqtt')
                             Nylon.toast({
-                                msg: 'เพิ่มเสร็จสิ้น'
+                                msg: 'SUCCESS INSERT'
                             })
                         })
                     }
@@ -84,7 +84,7 @@
             return dispatch => {
                 axios.delete(`/gateway?id=${id}`).then(
                     res => {
-                        Nylon.dispatch('GATEWAY_GET_DATA')
+                        Nylon.dispatch('GATEWAY_GET_DATA', localStorage.getItem('SMART_CITY_USER_ID'))
                     }
                 )
             }
@@ -104,11 +104,11 @@
             return dispatch => {
                 axios.put(`/gateway`, select).then(
                     res => {
-                        Nylon.dispatch('GATEWAY_GET_DATA')
+                        Nylon.dispatch('GATEWAY_GET_DATA', localStorage.getItem('SMART_CITY_USER_ID'))
                         Nylon.$['page-gateway'].$.right.$.pr.close()
                         Nylon.store.dispatch({ type: 'PLUG_CLEAR_SELECT' })
                         Nylon.toast({
-                            msg: 'แก้ไขเสร็จสิ้น'
+                            msg: 'SUCCESS EDIT'
                         })
                     }
                 )

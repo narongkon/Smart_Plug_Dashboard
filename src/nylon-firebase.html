@@ -52,6 +52,7 @@
         }
 
         logout() {
+            // clearInterval(Nylon.$['page-plug'].interval);
             localStorage.clear();
             sessionStorage.clear();
             firebase.auth().signOut()

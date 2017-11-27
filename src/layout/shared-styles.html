@@ -4,6 +4,21 @@
 <dom-module id="shared-styles">
   <template>
     <style include="flexbox-grid">
+      :host {
+        --paper-input-container-input: {
+          font-family: 'Mitr', sans-serif;
+        }
+        --paper-input-container-label: {
+          font-family: 'Mitr', sans-serif;
+        }
+        --paper-input-error: {
+          font-family: 'Mitr', sans-serif;
+        }
+        --paper-input-char-counter: {
+          font-family: 'Mitr', sans-serif;
+        }
+      }
+
       :root {
         --font: {
           font-family: 'Mitr', sans-serif;
@@ -57,8 +72,38 @@
         color: #FFF;
       }
 
+      paper-button.btn-primary:hover {
+        background-color: #027ab5;
+        color: #FFF;
+      }
+
       paper-button.btn-success {
         background-color: #28A745;
+        color: #FFF;
+      }
+
+      paper-button.btn-success:hover {
+        background-color: #24963e;
+        color: #FFF;
+      }
+
+      paper-button.btn-danger {
+        background-color: #d43f3a;
+        color: #FFF;
+      }
+
+      paper-button.btn-danger:hover {
+        background-color: #be3834;
+        color: #FFF;
+      }
+      
+      paper-button.btn-warning {
+        background-color: #FFA726;
+        color: #FFF;
+      }
+
+      paper-button.btn-warning:hover {
+        background-color: #FF9800;
         color: #FFF;
       }
 
@@ -67,19 +112,9 @@
         color: #707070;
       }
 
-      :host {
-        --paper-input-container-input: {
-          font-family: 'Mitr', sans-serif;
-        }
-        --paper-input-container-label: {
-          font-family: 'Mitr', sans-serif;
-        }
-        --paper-input-error: {
-          font-family: 'Mitr', sans-serif;
-        }
-        --paper-input-char-counter: {
-          font-family: 'Mitr', sans-serif;
-        }
+      paper-button.btn-default:hover {
+        background-color: #e5e5e5;
+        color: #707070;
       }
     </style>
   </template>

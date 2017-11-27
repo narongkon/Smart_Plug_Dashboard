@@ -39,16 +39,15 @@
                 <div slot="content">
                     <div class="row">
                         <div class="col-xs-6 col-sm-6 col-md-5">
-                            <paper-input always-float-label label="Mac Address" class="font" value="{{select.mac_address}}" char-counter maxlength="13"
-                                required auto-validate error-message="needs some text!"></paper-input>
+                            <paper-input always-float-label label="Mac Address *" class="font required" value="{{select.mac_address}}" required></paper-input>
                         </div>
                         <div class="col-xs-12 col-sm-6 col-md-5">
-                            <paper-input always-float-label label="Name" class="font" value="{{select.name}}" required auto-validate error-message="needs some text!"></paper-input>
+                            <paper-input always-float-label label="Name *" class="font required" value="{{select.name}}" required></paper-input>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-12 col-sm-6 col-md-10">
-                            <paper-input always-float-label label="Desciption" class="font" value="{{select.desciption}}" required auto-validate error-message="needs some text!"></paper-input>
+                            <paper-input always-float-label label="Desciption" class="font" value="{{select.desciption}}" required></paper-input>
                         </div>
                     </div>
                     <div class="row">
@@ -58,18 +57,18 @@
                             </paper-button>
                         </div>
                         <div class="col-xs-6 col-sm-6 col-md-4">
-                            <paper-input always-float-label label="Latitude" class="font" value="{{select.position.lat}}" required auto-validate allowed-pattern="[-+,0-9,.]"
-                                error-message="needs some number!"></paper-input>
+                            <paper-input always-float-label label="Latitude *" class="font required" value="{{select.position.lat}}" allowed-pattern="[-+,0-9,.]"
+                                required></paper-input>
                         </div>
                         <div class="col-xs-12 col-sm-6 col-md-4">
-                            <paper-input always-float-label label="Longitude" class="font" value="{{select.position.lng}}" required auto-validate allowed-pattern="[-+,0-9,.]"
-                                error-message="needs some number!"></paper-input>
+                            <paper-input always-float-label label="Longitude *" class="font required" value="{{select.position.lng}}" allowed-pattern="[-+,0-9,.]"
+                                required></paper-input>
                         </div>
                     </div>
                 </div>
                 <app-toolbar slot="footer">
                     <div main-title></div>
-                    <paper-button raised on-click="_closePanelRight" class="font">
+                    <paper-button raised class="font btn-default" on-click="_closePanelRight">
                         <iron-icon icon="clear"></iron-icon>&nbsp;&nbsp;CANCEL
                     </paper-button>
                     <paper-button raised class="btn-success font" on-click="_saveData">
@@ -142,8 +141,40 @@
                 this.$.pr.close()
             }
 
+            _clear_invalid() {
+                var array = this.shadowRoot.querySelectorAll(".required");
+                for (let index = 0; index < array.length; index++) {
+                    const element = array[index];
+                    element.invalid = false
+                }
+            }
+
             _saveData() {
+                var array = this.shadowRoot.querySelectorAll(".required");
+                // for (let index = 0; index < array.length; index++) {
+                //     const element = array[index];
+                //     element.invalid = true
+                // }
+
+                var flag = 0
+                for (let index = 0; index < array.length; index++) {
+                    const element = array[index];
+                    console.log(element.value);
+                    if (element.value == undefined || element.value == "") {
+                        element.focus()
+                        element.invalid = true
+                        Nylon.toast({
+                            msg: 'INPUT FOUND'
+                        })
+                        return false
+                    } else {
+                        element.invalid = false
+                    }
+                }
+
+                this.set('select.user_id', localStorage.getItem('SMART_CITY_USER_ID'))
                 if (!this.select.id || this.select.id == "") {
+
                     Nylon.dispatch('GATEWAY_INSERT_DATA', this.select)
                 } else {
                     Nylon.dispatch('GATEWAY_EDIT_DATA', this.select)

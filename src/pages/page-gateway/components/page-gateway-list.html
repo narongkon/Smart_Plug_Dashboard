@@ -28,7 +28,7 @@
                 <div main-title>
                     [[date_time]]
                 </div>
-                <paper-button raised class="btn font" on-click="_allLocation">
+                <paper-button raised class="btn-default font" on-click="_allLocation">
                     <iron-icon icon="maps:place"></iron-icon>&nbsp;&nbsp;Location
                 </paper-button>
                 <paper-button raised class="btn-primary font" on-click="_openPanelRight">
@@ -109,6 +109,7 @@
 
             _selectData(e) {
                 Nylon.dispatch('GATEWAY_SELECT_DATA', e.model.item.id)
+                Nylon.$['page-gateway'].$.right._clear_invalid()
             }
 
             _delData(e) {
@@ -124,6 +125,7 @@
             _openPanelRight() {
                 Nylon.dispatch('GATEWAY_CLEAR_SELECT')
                 Nylon.$['page-gateway'].$.right.$.pr.open()
+                Nylon.$['page-gateway'].$.right._clear_invalid()
             }
 
             _map() {

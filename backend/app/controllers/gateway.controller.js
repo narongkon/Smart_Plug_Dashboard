@@ -1,7 +1,9 @@
 exports.list = (req, res) => {
     const r = req.r;
     var tb = r.table('gateway')
-    if (req.query.hasOwnProperty('id1')) {
+    if (req.query.hasOwnProperty('user_id')) {
+        tb = tb.getAll(req.query.user_id, { index: 'user_id' })
+    } else if (req.query.hasOwnProperty('id')) {
         tb = tb.get(req.query.id)
     }
     tb.run()
