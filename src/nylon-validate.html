@@ -1,0 +1,52 @@
+<script>
+    class nylonValidate {
+        constructor() {
+
+        }
+
+        clear_invalid(self) {
+            var array = self.shadowRoot.querySelectorAll(".required")
+            for (let index = 0; index < array.length; index++) {
+                const element = array[index];
+                element.invalid = false
+            }
+        }
+
+        check_invalid(self) {
+            var array = self.shadowRoot.querySelectorAll(".required");
+            for (let index = 0; index < array.length; index++) {
+                const element = array[index];
+                if (element.value == undefined || element.value == "") {
+                    element.invalid = true
+                } else {
+                    element.invalid = false
+                }
+            }
+
+            let count = 0
+            for (let index = 0; index < array.length; index++) {
+                const element = array[index];
+                if (element.value == undefined || element.value == "") {
+                    element.focus()
+                    element.invalid = true
+                    return false
+                } else {
+                    ++count
+                    element.invalid = false
+                }
+                
+                // if (array.length == count) {
+                //     return "true"
+                // } else {
+                //     return "false"
+                // }
+                // console.log(array.length, count);
+
+            }
+        }
+
+    }
+
+    Nylon.Validate = new nylonValidate()
+
+</script>

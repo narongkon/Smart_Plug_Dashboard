@@ -36,32 +36,40 @@
                 </paper-tabs>
             </nylon-toolbar-selector>
             <nylon-panel-card id="pc2" slot="content">
+                <app-toolbar slot="header">
+                    <div main-title>
+                        ( * ) Not Empty,
+                        <iron-icon class="btn" icon="maps:pin-drop"></iron-icon> Google Map
+                    </div>
+                </app-toolbar>
+
                 <div slot="content">
                     <div class="row">
                         <div class="col-xs-6 col-sm-6 col-md-5">
-                            <paper-input always-float-label label="Mac Address *" class="font required" value="{{select.mac_address}}" required></paper-input>
+                            <paper-input always-float-label label="Mac Address *" class="font required" value="{{select.mac_address}}" auto-validate
+                                required></paper-input>
                         </div>
                         <div class="col-xs-12 col-sm-6 col-md-5">
-                            <paper-input always-float-label label="Name *" class="font required" value="{{select.name}}" required></paper-input>
+                            <paper-input always-float-label label="Name *" class="font required" value="{{select.name}}" auto-validate required></paper-input>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-12 col-sm-6 col-md-10">
-                            <paper-input always-float-label label="Desciption" class="font" value="{{select.desciption}}" required></paper-input>
+                            <paper-input always-float-label label="Desciption" class="font" value="{{select.desciption}}" auto-validate required></paper-input>
                         </div>
                     </div>
                     <div class="row">
                         <div style="margin-top: 17px;">
                             <paper-button raised on-click="_modal" class="btn font">
-                                <iron-icon icon="maps:pin-drop"></iron-icon>
+                                <iron-icon class="btn" icon="maps:pin-drop"></iron-icon>
                             </paper-button>
                         </div>
                         <div class="col-xs-6 col-sm-6 col-md-4">
-                            <paper-input always-float-label label="Latitude *" class="font required" value="{{select.position.lat}}" allowed-pattern="[-+,0-9,.]"
+                            <paper-input always-float-label label="Latitude *" class="font required" value="{{select.position.lat}}"auto-validate allowed-pattern="[-+,0-9,.]"
                                 required></paper-input>
                         </div>
                         <div class="col-xs-12 col-sm-6 col-md-4">
-                            <paper-input always-float-label label="Longitude *" class="font required" value="{{select.position.lng}}" allowed-pattern="[-+,0-9,.]"
+                            <paper-input always-float-label label="Longitude *" class="font required" value="{{select.position.lng}}" auto-validate allowed-pattern="[-+,0-9,.]"
                                 required></paper-input>
                         </div>
                     </div>
@@ -142,42 +150,23 @@
             }
 
             _clear_invalid() {
-                var array = this.shadowRoot.querySelectorAll(".required");
-                for (let index = 0; index < array.length; index++) {
-                    const element = array[index];
-                    element.invalid = false
-                }
+                Nylon.Validate.clear_invalid(this)
             }
 
             _saveData() {
-                var array = this.shadowRoot.querySelectorAll(".required");
-                // for (let index = 0; index < array.length; index++) {
-                //     const element = array[index];
-                //     element.invalid = true
-                // }
+                Nylon.Validate.check_invalid(this)
 
-                var flag = 0
-                for (let index = 0; index < array.length; index++) {
-                    const element = array[index];
-                    console.log(element.value);
-                    if (element.value == undefined || element.value == "") {
-                        element.focus()
-                        element.invalid = true
-                        Nylon.toast({
-                            msg: 'INPUT FOUND'
-                        })
-                        return false
+                if (Nylon.Validate.check_invalid(this) != false) {
+                    this.set('select.user_id', localStorage.getItem('SMART_CITY_USER_ID'))
+                    if (!this.select.id || this.select.id == "") {
+                        Nylon.dispatch('GATEWAY_INSERT_DATA', this.select)
                     } else {
-                        element.invalid = false
+                        Nylon.dispatch('GATEWAY_EDIT_DATA', this.select)
                     }
-                }
-
-                this.set('select.user_id', localStorage.getItem('SMART_CITY_USER_ID'))
-                if (!this.select.id || this.select.id == "") {
-
-                    Nylon.dispatch('GATEWAY_INSERT_DATA', this.select)
                 } else {
-                    Nylon.dispatch('GATEWAY_EDIT_DATA', this.select)
+                    Nylon.toast({
+                        msg: 'INPUT FOUND'
+                    })
                 }
             }
 
