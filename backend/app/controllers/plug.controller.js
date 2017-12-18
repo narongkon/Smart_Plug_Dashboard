@@ -1,4 +1,4 @@
-var client = require('../mqtt/config').connect()
+let client = require('./../mqtt/app/mqtt').client()
 
 exports.list = (req, res) => {
   const r = req.r;

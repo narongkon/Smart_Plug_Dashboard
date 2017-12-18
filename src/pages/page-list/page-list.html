@@ -1,0 +1,60 @@
+<link rel="import" href="./../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="./../../layout/layout-toolbar.html">
+<link rel="import" href="./../../layout/shared-styles.html">
+<link rel="import" href="./../../redux-mixin.html">
+<link rel="import" href="./../../redux/list-redux.html">
+<link rel="import" href="././components/page-list-list.html">
+<link rel="import" href="./components/page-list-right.html">
+<link rel="import" href="./components/page-list-right2.html">
+<dom-module id="page-list">
+    <template>
+        <style include="shared-styles">
+            :host {
+                display: block
+            }
+        </style>
+
+        <layout-toolbar title="Table Manage Device" sub-title="Device"></layout-toolbar>
+        <div class="container">
+            <page-list-list id="list"></page-list-list>
+            <!-- <page-list-right id="right"></page-list-right> -->
+            <!-- <page-list-right2 id="right2"></page-list-right2> -->
+        </div>
+
+
+
+    </template>
+
+    <script>
+
+        class PageList extends Polymer.Element {
+
+            static get is() {
+                return 'page-list';
+            }
+
+            static get properties() {
+                return {
+
+                };
+            }
+
+            constructor() {
+                super();
+            }
+
+            ready() {
+                super.ready();
+            }
+
+            nylonPagesActive() {
+                Nylon.dispatch('LIST_GET_DATA')
+                Nylon.dispatch('LIST_GET_TYPE_DEVICE')
+                Nylon.dispatch('LIST_GET_GROUP')
+            }
+
+        }
+
+        window.customElements.define(PageList.is, PageList);
+    </script>
+</dom-module>
