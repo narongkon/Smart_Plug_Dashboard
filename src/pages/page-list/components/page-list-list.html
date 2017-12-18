@@ -1,0 +1,274 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../../bower_components/polymer/lib/elements/dom-repeat.html">
+
+<link rel="import" href="../../../components/nylon-panel-card/nylon-panel-card.html">
+<link rel="import" href="../../../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../../../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../../../bower_components/vaadin-grid/vaadin-grid-column.html">
+<link rel="import" href="../../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../../bower_components/iron-icons/editor-icons.html">
+<link rel="import" href="../../../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../../../bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../../../bower_components/vaadin-icons/vaadin-icons.html">
+
+<link rel="import" href="../../../redux-mixin.html">
+<link rel="import" href="../../../layout/shared-styles.html">
+
+<dom-module id="page-list-list">
+    <template>
+        <style include="shared-styles">
+            :host {
+                display: block;
+            }
+
+            .details {
+                padding: 10px;
+                margin: 10px;
+                /* display: flex; */
+                /* justify-content: space-around; */
+                align-items: center;
+                box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14);
+                /* font-size: 20px; */
+            }
+
+            input[type=text] {
+                padding: 6px 20px;
+                box-sizing: border-box;
+            }
+
+            .btn-success-edit {
+                background-color: #4CAF50;
+                border: none;
+                color: white;
+                padding: 4px 20px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                cursor: pointer;
+            }
+
+            .btn-success-edit:hover {
+                background-color: #449d48;
+            }
+        </style>
+        <div class="row">
+            <vaadin-combo-box style="margin-left: 10px; width: 300px;" value="{{type_device_select}}" items="[[type_device]]" item-label-path="name"
+                item-value-path="code" label="Type Device" placeholder="All Type Device" on-selected-item-changed="_typeDeviceChange"
+                always-Float-Label>
+                <template>
+                    [[item.name]]
+                </template>
+            </vaadin-combo-box>
+            <vaadin-combo-box style="margin-left: 10px; width: 300px;" value="{{group_select}}" items="[[group]]" item-label-path="name"
+                item-value-path="id" label="Group" placeholder="All Group" on-selected-item-changed="_groupChange" always-Float-Label>
+                <template>
+                    [[item.name]]
+                </template>
+            </vaadin-combo-box>
+            <paper-icon-button style="margin-top: 25px;" class="btn" icon="icons:add-circle" on-click="_createGroup"></paper-icon-button>
+            <div id="edit_group">
+                <paper-icon-button style="margin-top: 25px;" class="btn" icon="icons:create"></paper-icon-button>
+                <paper-icon-button style="margin-top: 25px;" class="btn" icon="icons:delete"></paper-icon-button>
+            </div>
+        </div>
+
+        <nylon-panel-card id="pc1">
+            <app-toolbar slot="header">
+                <div main-title></div>
+            </app-toolbar>
+            <vaadin-grid on-dblclick="db_()" slot="content" sub-slot="grid" items="{{data}}" id="grid" on-active-item-changed="_onActiveItemChanged">
+                <template class="row-details">
+                    <div class="details">
+                        <template is="dom-repeat" items="{{item.service}}" as="service">
+                            <div style="margin-top: 10px; margin-left: 180px;" class="row">
+                                <label style="width: 120px;">{{service.service_name}}</label>
+                                <template is="dom-if" if="{{_isInput(service.viriable_type)}}">
+                                    <paper-input style="margin-top: -7px;" value="{{service.value}}" disabled="{{_disabled(service.read_write)}}" no-label-float></paper-input>
+                                </template>
+                                <template is="dom-if" if="{{_isToggle(service.viriable_type)}}">
+                                    <paper-toggle-button></paper-toggle-button>
+                                </template>
+                            </div>
+                        </template>
+                        <button id="[[item.id]]" style="margin-top: 25px; margin-bottom: 15px; margin-left: 300px;" class="btn-success-edit font"
+                            on-click="_edit">Save</button>
+                    </div>
+                </template>
+                <vaadin-grid-column width="100px" flex-grow="0">
+                    <template class="header">
+                        <div style="padding: 10px;">#</div>
+                    </template>
+                    <template>
+                        <div style="padding: 10px">[[_index(index)]]</div>
+                    </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column>
+                    <template class="header">
+                        <div>Device Name</div>
+                    </template>
+                    <template>
+                        <div>{{item.name}}</div>
+                    </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column>
+                    <template class="header">
+                        <div>Device Type</div>
+                    </template>
+                    <template>
+                        <div>[[item.device_name]] ([[item.device_type]])</div>
+                    </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column>
+                    <template class="header">
+                        <div>Device Mac Address</div>
+                    </template>
+                    <template>
+                        <div>[[item.device_mac_address]]</div>
+                    </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column>
+                    <template class="header">
+                        <div>Manage</div>
+                    </template>
+                    <template>
+                        <div>
+                            <paper-icon-button class="btn" icon="editor:multiline-chart"></paper-icon-button>
+                            <paper-icon-button class="btn" icon="icons:folder"></paper-icon-button>
+                            <paper-icon-button class="btn" icon="create" on-click="_selectData"></paper-icon-button>
+                            <paper-icon-button class="btn" icon="delete" on-click="_delData"></paper-icon-button>
+                        </div>
+                    </template>
+                </vaadin-grid-column>
+            </vaadin-grid>
+        </nylon-panel-card>
+    </template>
+
+    <script>
+        class PageListList extends ReduxMixin(Polymer.Element) {
+            static get is() { return 'page-list-list'; }
+            static get properties() {
+                return {
+                    i18n: {
+                        type: Object,
+                        statePath: 'i18n.pageMyView'
+                    },
+                    data: {
+                        type: Object,
+                        statePath: 'list.data'
+                    },
+                    type_device: {
+                        type: Object,
+                        statePath: 'list.type_device'
+                    },
+                    type_device_select: {
+                        type: String
+                    },
+                    group: {
+                        type: Object,
+                        statePath: 'list.group'
+                    },
+                    group_select: {
+                        type: String
+                    },
+                }
+            }
+
+            ready() {
+                super.ready();
+                this.$.edit_group.style.visibility = 'hidden'
+            }
+
+            _isInput(e) {
+                if (e == '00') {
+                    return true
+                }
+            }
+
+            _isToggle(e) {
+                if (e == '01') {
+                    return true
+                }
+            }
+
+            _disabled(e) {
+                if (e == '00') {
+                    return true
+                }
+            }
+
+            _edit(e) {
+                for (const i in this.select) {
+                    if (this.select.hasOwnProperty(i)) {
+                        const element = this.select[i];
+                        if (element.id === e.target.id) {
+                            console.log(element);
+                        }
+                    }
+                }
+            }
+
+            _typeDeviceChange(e) {
+                let data
+                if (e.detail.value) {
+                    if (this.group_select) {
+                        data = { type_device: e.detail.value.code, group: this.group_select }
+                    } else {
+                        data = { type_device: e.detail.value.code }
+                    }
+                    Nylon.dispatch('LIST_GET_DATA_BY_FILTER', data)
+                } else {
+                    if (this.group_select) {
+                        data = { group: this.group_select }
+                        Nylon.dispatch('LIST_GET_DATA_BY_FILTER', data)
+                    } else {
+                        Nylon.dispatch('LIST_GET_DATA')
+                    }
+                }
+            }
+
+            _groupChange(e) {
+                let data
+                if (e.detail.value) {
+                    this.$.edit_group.style.visibility = 'visible'
+                    if (this.type_device_select) {
+                        data = { group: e.detail.value.id, type_device: this.type_device_select }
+                    } else {
+                        data = { group: e.detail.value.id }
+                    }
+                    Nylon.dispatch('LIST_GET_DATA_BY_FILTER', data)
+                } else {
+                    this.$.edit_group.style.visibility = 'hidden'
+                    if (this.type_device_select) {
+                        data = { type_device: this.type_device_select }
+                        Nylon.dispatch('LIST_GET_DATA_BY_FILTER', data)
+                    } else {
+                        Nylon.dispatch('LIST_GET_DATA')
+                    }
+                }
+            }
+
+            _createGroup() {
+                Nylon.$['page-list'].$.right2._openPanelRight('Create')
+            }
+
+            _selectData(e) {
+                Nylon.dispatch('LIST_SELECT_DATA', e.model.item.id)
+            }
+
+            _index(index) {
+                return ++index
+            }
+
+            _onActiveItemChanged(e) {
+                this.$.grid.expandedItems = [e.detail.value];
+            }
+        }
+        window.customElements.define(PageListList.is, PageListList);
+    </script>
+</dom-module>

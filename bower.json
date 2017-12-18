@@ -42,6 +42,8 @@
     "vaadin-combo-box": "vaadin/vaadin-combo-box#^2.0.0",
     "paper-spinner": "PolymerElements/paper-spinner#^2.0.0",
     "polymerfire": "firebase/polymerfire#^2.2.1",
-    "paper-dialog-scrollable": "PolymerElements/paper-dialog-scrollable#^2.1.0"
+    "paper-dialog-scrollable": "PolymerElements/paper-dialog-scrollable#^2.1.0",
+    "paper-checkbox": "PolymerElements/paper-checkbox#^2.0.1",
+    "vaadin-icons": "vaadin/vaadin-icons#^4.1.3"
   }
 }

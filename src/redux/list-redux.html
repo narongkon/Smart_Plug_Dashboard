@@ -1,0 +1,111 @@
+<script>
+    Nylon.addReducer('list', function (state, action) {
+        state = state || {
+            data: [],
+            select: {}
+        }
+
+        switch (action.type) {
+            case 'LIST_GET_DATA':
+                state.data = action.payload
+                return state
+                break
+            case 'LIST_GET_TYPE_DEVICE':
+                state.type_device = action.payload
+                break
+            case 'LIST_GET_GROUP':
+                state.group = action.payload
+                break
+            case 'LIST_SELECT_DATA':
+                state.select = action.payload
+                break
+            default:
+                return state
+        }
+        return state
+    })
+
+
+    Nylon.addAction({
+        LIST_GET_DATA: function () {
+            var progress = Nylon.$['page-list'].$.list.$.pc1.progress({ position: 'top' })
+            return dispatch => {
+                axios.get(`/list`).then(res => {
+                    progress(() => {
+                        dispatch({ type: 'LIST_GET_DATA', payload: res.data })
+                    })
+                }).catch(err => {
+                    progress(() => {
+                        Nylon.$['page-list'].$.list.$.pc1.notify({
+                            status: 'error',
+                            msg: err.response.data.msg,
+                            position: 'top'
+                        })
+                    })
+                })
+            }
+        },
+        LIST_GET_DATA_BY_FILTER: function (data) {
+            return dispatch => {
+                if (data.hasOwnProperty('type_device') && data.hasOwnProperty('group')) {
+                    console.log('multiple');
+                } else if (data.hasOwnProperty('type_device')) {
+                    console.log('type_device');
+                } else if (data.hasOwnProperty('group')) {
+                    console.log('group');
+                }
+            }
+        },
+        LIST_GET_TYPE_DEVICE: function () {
+            return dispatch => {
+                axios.get(`/type_device`).then(res => {
+                    dispatch({ type: 'LIST_GET_TYPE_DEVICE', payload: res.data })
+                }).catch(err => {
+
+                })
+            }
+        },
+        LIST_GET_GROUP: function () {
+            return dispatch => {
+                axios.get(`/group`).then(res => {
+                    dispatch({ type: 'LIST_GET_GROUP', payload: res.data })
+                }).catch(err => {
+
+                })
+            }
+        },
+        LIST_INSERT_GROUP: function (data) {
+            return dispatch => {
+                axios.post(`/group`, data).then(res => {
+                    Nylon.redirect('/list')
+                    Nylon.$['page-list'].$.right2.$.pr.close()
+                }).catch(err => {
+
+                })
+            }
+        },
+        LIST_SELECT_DATA: function (id) {
+            return dispatch => {
+                axios.get(`/list?id=${id}`).then(res => {
+                    dispatch({ type: 'LIST_SELECT_DATA', payload: res.data })
+                    Nylon.$['page-list'].$.right.$.pr.open()
+                }).catch(err => {
+
+                })
+            }
+        },
+        LIST_EDIT_DATA: function (data) {
+            return dispatch => {
+                axios.put(`/list`, data).then(res => {
+                    Nylon.redirect('/list')
+                    Nylon.$['page-list'].$.right.$.pr.close()
+                }).catch(err => {
+
+                })
+            }
+        },
+
+
+    })
+
+</script>

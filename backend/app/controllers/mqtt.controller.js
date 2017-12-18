@@ -1,4 +1,4 @@
-var client = require('../mqtt/config').connect()
+let client = require('./../mqtt/app/mqtt').client()
 
 function mac_address_to_buffer(data) {
     var j = 0, k = 1, array = []

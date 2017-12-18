@@ -1,0 +1,110 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../../../components/nylon-panel-card/nylon-panel-card.html">
+<link rel="import" href="../../../components/nylon-panel-right/nylon-panel-right.html">
+<link rel="import" href="../../../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../../bower_components/iron-icons/maps-icons.html">
+<link rel="import" href="../../../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../components/nylon-toolbar-selector/nylon-toolbar-selector.html">
+<link rel="import" href="../../../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../../../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+
+<link rel="import" href="../../../redux-mixin.html">
+<link rel="import" href="../../../layout/shared-styles.html">
+
+<dom-module id="page-list-right2">
+    <template>
+        <style include="shared-styles">
+            :host {
+                display: block;
+            }
+
+            google-map {
+                height: 400px;
+                width: 700px;
+            }
+        </style>
+
+        <nylon-panel-right id="pr" title="Manage Group">
+            <nylon-toolbar-selector slot="header">
+                <paper-tabs selected="0" scrollable>
+                    <paper-tab class="font">[[topic]]</paper-tab>
+                </paper-tabs>
+            </nylon-toolbar-selector>
+            <nylon-panel-card id="pc3" slot="content">
+                <app-toolbar slot="header">
+                    <div main-title>
+                        ( * ) Not Empty
+                    </div>
+                </app-toolbar>
+
+                <div slot="content">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-6 col-md-5">
+                            <paper-input always-float-label label="Name *" class="font required" value="{{select.name}}" auto-validate required></paper-input>
+                        </div>
+                    </div>
+                </div>
+                <app-toolbar slot="footer">
+                    <div main-title></div>
+                    <paper-button raised class="font btn-default" on-click="_closePanelRight">
+                        <iron-icon icon="clear"></iron-icon>&nbsp;&nbsp;CANCEL
+                    </paper-button>
+                    <paper-button raised class="btn-success font" on-click="_saveData">
+                        <iron-icon icon="check"></iron-icon>&nbsp;&nbsp;SAVE
+                    </paper-button>
+                </app-toolbar>
+            </nylon-panel-card>
+        </nylon-panel-right>
+
+    </template>
+
+    <script>
+        class PageListRight2 extends ReduxMixin(Polymer.Element) {
+            static get is() { return 'page-list-right2'; }
+            static get properties() {
+                return {
+                    select: {
+                        type: Object,
+                        statePath: 'list.select'
+                    },
+                    topic: {
+                        type: Object
+                    }
+                }
+            }
+
+            _openPanelRight(topic) {
+                this.set('topic', topic)
+                this.$.pr.open()
+            }
+
+            _closePanelRight() {
+                this.$.pr.close()
+            }
+
+            _clear_invalid() {
+                Nylon.Validate.clear_invalid(this)
+            }
+
+            _saveData() {
+                Nylon.Validate.check_invalid(this)
+                if (Nylon.Validate.check_invalid(this) != false) {
+                    if (!this.select.id || this.select.id == "") {
+                        Nylon.dispatch('LIST_INSERT_GROUP', this.select)
+                    } else {
+                        Nylon.dispatch('LIST_EDIT_GROUP', this.select)
+                    }
+                } else {
+                    Nylon.toast({
+                        msg: 'INPUT FOUND'
+                    })
+                }
+            }
+
+        }
+        window.customElements.define(PageListRight2.is, PageListRight2);
+    </script>
+</dom-module>

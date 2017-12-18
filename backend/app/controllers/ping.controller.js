@@ -1,4 +1,4 @@
-var client = require('../mqtt/config').connect()
+let client = require('./../mqtt/app/mqtt').client()
 
 var flag = 0    // flag = 0 (ส่ง Ping (ฺBroadcast)) และ flag = 1 (บันทึกค่า Device ที่ตอบ Ping)
 var mac_ping = []   // mac_ping เก็บค่า Mac Address ที่ทำการ Ping ((ฺBroadcast) เพื่อตรวจสอบและบันทึกค่า
